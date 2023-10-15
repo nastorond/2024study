@@ -1,5 +1,7 @@
 # 운영체제 코드 및 요약 정리
 
+### forked from yonghwankim-dev/OperatingSystem_Study
+
 ### Chapter 1-2. Introduction & O/S Structures
 
 1.  [운영체제의 소개: Introduction](https://yonghwankim-dev.tistory.com/186)
