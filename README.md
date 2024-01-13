@@ -28,4 +28,5 @@
 
 ## 공부 목차
 1. 운영체제 (8주)
+    -  [\[인프런\] 운영체제 공룡책 강의](https://www.inflearn.com/course/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C-%EA%B3%B5%EB%A3%A1%EC%B1%85-%EC%A0%84%EA%B3%B5%EA%B0%95%EC%9D%98/dashboard)
     - 영상은 퀴즈 전까지 
