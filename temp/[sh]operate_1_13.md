@@ -30,7 +30,7 @@
     - 정지 문제 Halting Problem : 튜링 머신으로 풀 수 없는 문제
 ### 앨런 튜링
 - Head, Tape,   Turing Machines, Universal Turing Machine
-- CPU,  Memory, aplication,    Operating System
+- CPU,  Memory, aplication,      Operating System
 ### 폰 노이만
 - cpu -bus&rarr; RAM
 - a stored-program computer
