@@ -116,3 +116,48 @@ $\rarr$ a process that has terminated, but whose parent has not yet called wait(
 $\rarr$ a process that has a parent process who did not invoke wait() and instead terminated
 (wait없이 return으로 종료 시 부모없는 자식 생김)
 
+### UNIX-like O/S
+$\rarr$ A new process is created by the <b>fork()</b> system call  
+$\rarr$ The child process consists of a <strong>copy of the address space</strong> of the parent process
+$\rarr$ 두 프로세스(parent process, child process) 모두 fork() system call 이후 지시에 따라 계속 실행  
+$\rarr$ Difference:  
+child process : the return code for the fork() is zero  
+parent process : the nonzero pid(운영체제가 부여한 pid) of the child  
+
+```c
+// P0의 pid가 0802이고, P1의 pid가 1202일때
+
+#include <stdio.h>
+#include <unistd.h>
+int main()
+{
+    pid_t pid;
+    pid = fork(); // 1. fork 진행:parent(P0)의 메모리 공간 복사
+                  // 이때, fork() 된 child process pid 받아서 저장
+
+    printf("Hello, Process!\n", pid);
+} // 2. parent는 return 0로 끝남 -> CPU release
+// 3. ready queue에 대기 중인 child(P1)의 PC(Program Counter)는 fork 이후에 printf를 가르킴
+// 4. child(P1)이 printf("Hello, Process!\n")진행
+
+// 출력 결과
+Hello, Process! 1202
+Hello, Process! 0
+```
+ 
+ ### fork() system call
+$\rarr$ After a fork() system call,
+parents의 address space 복제하고, parent는 <b>continue its execution</b>  
+또는, 
+• if it has nothing else to do while the child runs,
+- it can issue a wait() system call 
+- to move itself off the ready queue until the termination of the child.
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
+$\rarr$ 
