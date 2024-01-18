@@ -128,3 +128,26 @@
         - who did not invoke wait() and instead terminated
         - 부모가 없음
     - demon process, back ground process 를 만들 때 활용
+
+
+# 프로세스 생성
+# Operations on Processes
+- ram에 load 되어 있는 상태가 process
+- process의 state, resorce 와 cpu의 register의 정보를 합친 것이 PCB
+- 현재 PCB 정보를 외부에 저장하고 새로운 PCB의 정보를 CPU에 load 하는 것이 context-swtich
+- 문맥교환을 통해 concurrent 하게 제어. 동시성
+## In UNIX-like O/S
+- A new process is created by the fork() system call
+- The child process consists of
+    - a copy of the address space of the parent process
+- Both processes continue execution
+    - at the instruction after the fork() system call
+- With one diff
+    - the return code for the fork() is zeor for the child process,
+    - the nonzero pid(OS kernel이 부여한) of the child is returned to the parent process
+- After a fork() system call
+    - the parent can continue its execution
+    - if it has nothing else to do while the child runs
+        - it can issue a wait() system call
+        - to move itself off the ready queue until the termination of the child
+- execlp, pid
