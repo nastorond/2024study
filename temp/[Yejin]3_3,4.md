@@ -148,16 +148,99 @@ Hello, Process! 0
  ### fork() system call
 $\rarr$ After a fork() system call,
 parents의 address space 복제하고, parent는 <b>continue its execution</b>  
-또는, 
-• if it has nothing else to do while the child runs,
-- it can issue a wait() system call 
-- to move itself off the ready queue until the termination of the child.
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
-$\rarr$ 
+또는,  
+$\rarr$ <b>a wait() system call</b>을 진행하면, child가 끝날때까지 parents가 ready queue에서 wait queue로 이동  
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <wait.h>
+
+int main()
+{
+    pid_t pid;
+    pid = fork();
+    if (pid > 0) // 1. parent 들어옴
+        wait(NULL); // 2. parent는 wait queue로 이동
+    printf("Hello, Process! %d\n", pid); // 3. child가 CPU 점령, if문에 해당하지 않아 바로 출력
+    // 4. wait queue에 interrupt 검
+    // 5. parent가 CPU 점령하여 출력 진행
+}
+
+// 출력 결과 
+Hello, Process! 0
+Hello, Process! 1202
+```
+
+## Exercise
+### 3.1
+``` c
+int value = 5;
+int main() 
+{
+    pid_t pid;
+    pid = fork(); // 1. fork하는 시점에 parent와 child 모두 value = 5
+                  // 하지만, P0와 P1에 각각 따로 저장
+
+    if (pid == 0) { // 3. child process -> P1의 value = 20 주고, return 0
+        value += 15;
+        return 0;
+    }
+    else if (pid > 0) { // 2. parent process -> wait queue
+        wait(NULL);
+        printf("Parent: value = %d\n", value); // 4. P0의 vaule인 5 출력
+    }
+}
+// 출력 결과
+Parent: value = 5
+```
+
+### 3.2
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <wait.h>
+/** How many processes are created? -> 8개*/
+int main() 
+{
+    fork(); // fork a child process : P0 -> P1
+    fork(); // fork another child process : P0, P1 -> P2, P3 
+    fork(); // and fork another : P0, P1, P2, P3 -> P4, P5, P6, P7
+    return 0;
+}
+```
+
+### 3.11
+```c
+#include <stdio.h>
+#include <unistd.h>
+/** How many processes are created? -> 16개*/
+int main() 
+{
+    int i;
+    
+    for (i = 0; i < 4; i++)
+        fork(); // fork() 4번 진행 -> 2**4 = 16개
+    return 0;
+}
+```
+
+### 3.12
+```c
+int main() 
+{
+    pid_t pid;
+    pid = fork();
+
+    if (pid == 0) { // child process
+        execlp("/bin/ls", "ls", NULL);
+        printf ("LINE J\n");
+    }
+    else if (pid > 0) { // parent process
+        wait(NULL);
+        printf ("Child Complete\n");
+    }
+
+    return 0;
+}
+```
