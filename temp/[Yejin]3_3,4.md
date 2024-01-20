@@ -233,8 +233,8 @@ int main()
     pid = fork();
 
     if (pid == 0) { // child process
-        execlp("/bin/ls", "ls", NULL);
-        printf ("LINE J\n");
+        execlp("/bin/ls", "ls", NULL); // parent에서 복사된 프로세스가 ls로 덮어씌워졌기 때문에 
+        printf ("LINE J\n"); // LINE J는 출력되지 않음 -> execlp 뒤에 문장은 의미가 없어짐
     }
     else if (pid > 0) { // parent process
         wait(NULL);
@@ -243,4 +243,71 @@ int main()
 
     return 0;
 }
+```
+
+### 3.13
+```c
+int main() 
+{
+    pid_t pid, pid1;
+    pid = fork();
+
+    if (pid == 0) { // child process
+        pid1 = getpid();
+        printf("child: pid = %d\n", pid); // A : 0
+        printf("child: pid1 = %d\n", pid1); // B : child pid
+    }
+
+    else if (pid > 0) { // parent process
+        pid1 = getpid();
+        printf("parent: pid = %d\n", pid); // C : child pid
+        printf("parent: pid1 = %d\n", pid1); // D : parent pid
+        wait(NULL);
+    }
+
+    return 0;
+} // 즉, B와 C가 같아야함
+// 출력 순서 : C -> D -> A -> B
+// A -> B -> C -> D의 순으로 출력을 원할경우 wait를 2줄 위로 옮겨주어 
+// parent가 들어온 즉시 wait 걸고 child 실행해야 함
+```
+
+### 3.16
+```c
+#define SIZE 5
+int nums[SIZE] = {0, 1, 2, 3, 4};
+
+int main()
+{
+    pid_t pid;
+    int i;
+    pid = fork();
+
+    if (pid == 0) { // child process
+        for (i = 0; i < SIZE; i++) {
+            nums[i] *= i;
+            printf("CHILD: %d \n", nums[i]); // LINE X
+        }
+    }
+
+    else if (pid > 0) { // parent process
+        wait(NULL);
+            for (i = 0; i < SIZE; i++) {
+            printf("PARENT: %d \n", nums[i]); // LINE X
+        }
+    }
+
+    return 0;
+}
+// 출력 결과
+CHILD: 0
+CHILD: 1
+CHILD: 4
+CHILD: 9
+CHILD: 16
+PARENT: 0
+PARENT: 1
+PARENT: 2
+PARENT: 3
+PARENT: 4
 ```
