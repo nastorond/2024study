@@ -11,8 +11,13 @@
 |Heap Section|memory that is dynamically<br> allocated during program run time<br>e.g. new(Java), malloc, etc|
 |Stack Section|temporary data storage<br> when invoking function<br>function parameter, return address,<br> local variables|
 
+&rarr; logical하게 어떤 프로그램이 시작하는 부분을 0, 최대 메모리 영역이 max라고 했을 때<br>
 &rarr; program : source code를 컴파일<br>
-&rarr; process : load program
+&rarr; process : load program<br>
+- malloc()(e.g. sizeof(int) * 4)<br>
+    &rarr; 동적할당 : 프로그램 실행 중에 동적으로 메모리를 할당하는 것
+    &rarr; 동적 할당한 메모리는 꼭 마지막에 해제해 주어야 함  
+    &rarr; 메모리 릭, 메모리 누수가 발생하기 때문에  
 
 ## Process Concept
 ### 생명주기
