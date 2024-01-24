@@ -63,11 +63,11 @@
     - multiprocessing 보다 좋음
     - 특별한 경우 아니면 multithreading
 ## Process Scheduling
-### The obejctive of multiprogramming
+### The objective of multiprogramming
 - to have some process running at all times
 - so as to maximize CPU utilization
 - 동시에 하는 것과 병렬처리는 다르다
-### The obejctive of time sharing
+### The objective of time sharing
 - to switch a CPU core among process so frequently
 - that users can interact with each program while it is running
 ### Scheduling Queues
