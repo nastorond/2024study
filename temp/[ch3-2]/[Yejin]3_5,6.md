@@ -154,6 +154,27 @@ mailbox (ports) :
 - send(𝐴, message) – send a message to mailbox 𝐴  
 - receive(𝐴, message) – receive a message from mailbox 𝐴  
 
+> 특징  
+&rarr; 두 개의 processes가 공유하는 mailbox(port)가 존재 할 때, 두 processes 사이의 link가 생성됨  
+▪ The properties of communication links in this scheme:
+• Links are established between a pair of processes
+- only if both members of the pair have a shared mailbox.
+• A link may be associated with more than two processes.
+• A number of different links may exist, between each pair of processes
+- with each link corresponding to one mailbox.
+
+▪ OS provides a mechanism that allows a process to do:
+• Create a new mailbox.
+• Send and Receive messages through the mailbox.
+• Delete a mailbox.
+
+▪ Different design options for implementation:
+• blocking or non-blocking: synchronous or asynchronous
+• Blocking send: the sender is blocked until the message is received.
+• Non-blocking send: the sender is sends the message and continue.
+• Blocking receive: the receiver blocks until a message is available.
+• Non-blocking receive: the receiver retrieves either a valid message or 
+a null message.
 
 
 &rarr; 
