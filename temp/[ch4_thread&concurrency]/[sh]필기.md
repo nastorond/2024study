@@ -1,3 +1,4 @@
+# 7. 쓰레드의 이해
 # Thread & Concurrency
 ### So far, we assumed that
 - a process was an executing program *with a single thread of control*
@@ -196,3 +197,183 @@ public class ThreadEx5 {
     - S=0.25, N=2, speedup = 1.6
     - s=0.25, N=4, speedup = 2.28
 - 모든 작업이 병렬처리 하게 되지 않아서 생기는 것. 당연한거 아닌가
+
+# 8. 멀티쓰레딩
+## Multithreading Models
+### Two types of threads
+- *user* threads : 사용자 모드에서 사용 하는 것
+    - supported above the kernel
+    - and managed *without kernel support*
+- *kernel* threads : 커널단에서 사용하는 것
+    - supported and managed direct;y by *the operating system*
+### Three relationships between user and kernel threads
+- Many-to-One Model
+    - 하나의 커널에 여러개의 쓰레드가 돌아감
+    - user thread 가 너무 많아지면 감당이 안됨
+- One-to-One Model
+    - 각 kernel thread에 user thread를 하나씩 매칭
+- Many-to-Many Model
+    - 여러개의 kernel threads 가 있고 user threads 가 있고 맵핑해서 사용
+
+### A *thread library* provides
+- an API for *creating* and *managing* threads
+### Three main thread libraries are in use today
+- POSIX Pthreads
+- Windows thread
+- Java thread
+### Pthreads
+- refers to the POSIX standard IEEE 1003.1c
+- just ***specification*** for thread behavior, not an impl
+- 실제로 구현한건 아님
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+int sum;
+
+void * runner(void *param);
+
+int main(int argc, char *argv[])
+{
+    pthread_t tid;  // thread identifier
+    pthread_attr_t attr;    // thread attributes
+
+    pthread_attr_init(&attr);
+    pthread_create(&tid, &attr, runner, argv[1]);   // create == java의 new
+    pthread_join(tid, NULL);
+
+    printf("sum = %d\n", sum);
+}
+void *runner(void *param)   // 런너
+{
+    int i, upper = atoi(param); // atoi string to int
+    sum = 0;
+    for (i=0; i<=upper; i++)
+        sum += i;
+    pthread_exit(0);
+}
+```
+
+### 연습문제 4.17
+```c
+pid_t pid;
+pid = fork();
+if (pid == 0) {
+    fork();
+    thread_create( . . .);
+}
+fork();
+```
+- a. How many unique proesses are created?  6개
+- b. How many unique thread are created?    2개(8개) create 해서 생기는 것은 명시적으론 2개
+
+### 연습문제 4.19
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <wait.h>
+#include <pthread.h>
+
+int value = 0;
+void * runner(void * param);
+
+int main(int argc, char *argv[]) 
+{
+    pid_t pid;
+    pthread_t tid;
+    pthread_attr_t attr;
+
+    pid = fork();
+
+    if (pid == 0) {
+        pthread_attr_init(&attr);
+        pthread_create(&tid, &attr, runner, NULL);
+        pthread_join(tid, NULL);
+        printf("CHILD: value = %d\n", value);
+    }
+    else if (pid > 0) {
+        wait(NULL);
+        printf("PARENT: value = %d\n", value);
+    }
+}
+
+void *runner(void *param)
+{
+    value = 5;
+    pthread_exit(0);
+}
+
+/* 출력 결과
+* CHILD: value 5
+* PARENT : value = 0
+*/
+```
+
+## Implicit Threading
+### The Strategy of Implicit Threading
+- 알아서 좀 해도
+- 강의에서는 뺏는데 java 에는 execute 가 있음 자동화임
+- The design of *concurrent* and *parallel* applications
+    - i.e., the design of *multithreading* in *multicore* system
+    - is tooooooo difficult for app developers
+- So, *transfer the difficulty* to compiler and run-time libraries
+### Four alternative approaches using implicit threading
+- Thread Pools
+    - create a number of threads in a pool where they await work
+    - new Thread()를 하면 thread를 하나 만듬
+    - 근데 만약 무한루프 안에 만들면 시스템이 뻗을 거임
+    - 그래서 new Thread()를 프로그래머가 하지 않게 하는 것
+    - Thread Pool.getThread() 이런식으로
+- Fork & Join
+    - explicit threading, but an excellent candidate for *implicit* threading
+    - fork() 와 join()의 매커니즘을 가지고 함
+    - 책에 자세히 설명 되어 있음, 운영체제에서 중요하진 않은듯
+- OpenMP
+    - a set of compiler directives and an API for programs written in C/C++
+- Grand Center Dispatch
+    - 애플에서 쓰는건데 잘 모름
+### OpenMP
+- identifies parallel regions as blocks of code that may run in parallel
+- insert compiler directives into source code at parallel regions
+- these directives instruct OpenMP runtime library to execute the region in parallel
+
+```c
+#include <stdio.h>
+#include <omp.h>
+
+int main (int argc, char *argv[])
+{
+    omp_set_num_threads(4);
+
+    #pragma omp parallel // compiler directive
+    {
+        printf("OpenMP thread: %d \n", omp_get_thread_num());
+    }
+    return 0;
+// 4개가 실행 되는데, 출력의 순서는 보장되지 않음
+}
+```
+
+```c
+#include <stdio.h>
+#include <omp.h>
+#define SIZE 100000000
+
+int a[SIZE], b[SIZE], c[SIZE];
+
+int main(int argc, char *argv[])
+{
+    int i;
+    for (int i=0; i<SIZE; i++) {
+        a[i] = b[i] = i;
+    }
+    #pragma omp parallel for
+    for (i=0; i<SIZE; i++) {
+        c[i] = a[i] + b[i];
+    }
+    return 0;
+// time 파일명.c 하면 시간 경과시간이 나옴
+// 병렬처리 한게 더 빠름 자세한건 병렬처리 시간에 할거임 ㅇㅇ
+}
+```
