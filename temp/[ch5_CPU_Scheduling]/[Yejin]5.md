@@ -95,14 +95,87 @@ context switch가 얼마나 자주 일어나는지 확인하는 명령어
 &rarr; the time it takes to start responding  
 
 ## Scheduling Algorithms
-#### CPU Scheduling Problem
-• decide which of the processes in the ready queue
-- is to be allocated the CPU’s core.
+### CPU Scheduling Problem
+: ready queue에 있는 processes 중 CPU’s core에 할당할 프로세스를 결정
 
- The solutions for the scheduling problem:
-• FCFS: First-Come, First-Served
-• SJF: Shortest Job First (SRTF: Shortest Remaining Time First)
-• RR: Round-Robin
-• Priority-based
-• MLQ: Multi-Level Queue
-• MLFQ: Multi-Level Feedback Queue
+### Solutions for the scheduling problem
+• **FCFS**
+: First-Come, First-Served  
+  &rarr; (초창기 O/S에 사용되었음, 현재는 문제점이 많아 사용하지 않음)  
+• **SJF**: Shortest Job First (**SRTF**: Shortest Remaining Time First)  
+• **RR**: Round-Robin(time-sharing)  
+  &rarr; (현대적 컴퓨터에서는 모두 사용하는 방식)
+• **Priority-based**  
+• **MLQ**: Multi-Level Queue  
+• **MLFQ**: Multi-Level Feedback Queue 
+
+### FCFS(First-Come, First-Served)
+&rarr; the simplest CPU-scheduling algorithm  
+&rarr; 먼저 요청하는 process에게 CPU를 먼저 할당  
+&rarr; 구현 난이도 낮음 with a FIFO queue  
+
+<b>고려사항 예시</b>  
+&rarr; arrive at time 0  
+&rarr; process with Burst Time(P1 : 24, P2 : 3, P3 : 3)
+
+예제 1. order P1, P2, P3
+<img src = "./img/FCFS.png" height = 50px>  
+&rarr; Waiting Time for 𝑃1 = 0, 𝑃2 = 24, 𝑃3 = 27  
+&rarr; Total Waiting Time: (0 + 24 + 27) = 51  
+&rarr; Average Waiting Time: 51/3 = 17  
+&rarr; Turnaround Time for 𝑃1 = 24, 𝑃2 = 27, 𝑃3 = 30
+&rarr; Total Turnaround Time: (24 + 27 + 30) = 81
+&rarr; Average Turnaround Time: 81/3 = 27
+
+예제 2. order P2, P3, P1
+<img src = "./img/FCFS_2.png" height = 50px>  
+&rarr; Waiting Time for 𝑃1 = 6, 𝑃2 = 0, 𝑃3 = 3  
+&rarr; Total Waiting Time: (6 + 0 + 3) = 9  
+&rarr; Average Waiting Time: 9/3 = 3  
+&rarr; Turnaround Time for 𝑃1 = 30, 𝑃2 = 6, 𝑃3 = 3  
+&rarr; Total Turnaround Time: (30 + 6 + 3) = 39  
+&rarr; Average Turnaround Time: 39/3 = 13  
+
+<b>주의점</b>  
+• The average waiting time under the FCFS policy  
+&rarr; is generally <b>not minimal</b> and may <b>vary substantially</b>   
+&rarr; if the processes’ <b>CPU-burst times </b>vary greatly.  
+
+• Preemptive or non-preemptive?  
+&rarr; The FCFS scheduling algorithm is <b>non-preemptive</b>  
+
+• The performance in a dynamic situation:  
+&rarr; What if we have one CPU-bound and many I/O-bound processes?  
+
+• Convoy Effect(호송효과)  
+&rarr; all the other processes wait for the one big process to get off the CPU  
+&rarr; results in lower CPU and device utilization than might be possible   
+&rarr; if the shorter processes were allowed to go first  
+&rarr; 똥차 효과 : 뒷차가 좋아도 앞차가 똥차인경우 다 가지못하고 똥차속도에 맞춰짐  
+
+### SJF(Shortest-Job-First)
+: shortest-next-CPU-burst-first scheduling  
+• SJF associates with each process the length of the process’s next CPU burst  
+• CPU를 사용할 수 있으면, 다음 CPU burst가 가장 작은 프로세스 할당  
+• 만약 동시에 도착할 경우 FCFS 방식 사용  
+
+<b>고려사항 예시</b>  
+&rarr; arrive at time 0  
+&rarr; process with Burst Time(P1 : 6, P2 : 8, P3 : 7, P4 : 3)
+
+예제 1. order P4, P1, P3, P2
+<img src = "./img/SJF.png" height = 50px>  
+&rarr; Waiting Time for 𝑃1 = 3, 𝑃2 = 16, 𝑃3 = 9, 𝑃4 = 0
+&rarr; Total Waiting Time: (3 + 16 + 9 + 0) = 28
+&rarr; Average Waiting Time: 28/4 = 7
+&rarr; Turnaround Time for 𝑃1 = 9, 𝑃2 = 24, 𝑃3 = 16, 𝑃4 = 3
+&rarr; Total Turnaround Time: (9 + 24 + 16 + 3) = 52
+&rarr; Average Turnaround Time: 52/4 = 13
+
+<b>주의점</b> 
+• The SJF scheduling algorithm is provably optimal,
+- it gives the minimum average waiting time for a given set of processes.
+• Moving a short process before a long one
+- decreases the waiting time of the short process
+- more than it increases the waiting time of the long process.
+- Consequently, the average waiting time decreases.
