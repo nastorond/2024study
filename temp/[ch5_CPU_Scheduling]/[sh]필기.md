@@ -20,9 +20,12 @@
 - Non-preemptive scheduling
     - a process keeps the CPU until it releases it
     - either by terminating or by switching to the waiting state
+
 - Preemptive scheduling
     - a process can be preempted by the scheduler
+
 ### Decision Making for CPU-scheduling
+
 - When a process switches from the running to waiting state
 -              =                   running to ready state
 -              =                   waiting to ready state
