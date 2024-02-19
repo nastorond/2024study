@@ -173,9 +173,11 @@ context switch가 얼마나 자주 일어나는지 확인하는 명령어
 &rarr; Average Turnaround Time: 52/4 = 13
 
 <b>주의점</b> 
-• The SJF scheduling algorithm is provably optimal,
+• The SJF scheduling algorithm is <b>provably optimal</b>,
 - it gives the minimum average waiting time for a given set of processes.
+
 • Moving a short process before a long one
 - decreases the waiting time of the short process
 - more than it increases the waiting time of the long process.
+
 - Consequently, the average waiting time decreases.
