@@ -146,3 +146,7 @@
   - allows a process to be preemptive when it is running in kernel mode
   - essentially diifuclt to design
   - but favorable since it may be more responsive
+
+
+# 12. 동기화 문제의 해결책
+## 
