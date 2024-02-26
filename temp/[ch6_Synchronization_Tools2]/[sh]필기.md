@@ -120,3 +120,154 @@
     - n을 S로 사용할 때, 인스턴스의 개수와 동일해야 함
     - n을 다시 1로 바꾸면 binary semaphore 가 되니까 정상적으로 작동함.
 - 위 모든 건 locking 을 기반으로 구현
+
+# 모니터와 자바 동기화
+## Monitors
+### The _difficulty_ of using semaphores
+- The semaphore is _convenient_ and _Effective_ for synchronization
+- However, _timing errors_ can happen
+    - if particular execution sequences take place
+    - these sequence _do not always occur_
+    - and it is _hard to detect_
+### An illustrative e.g. of semaphore's prob
+- All processes share a _Binary semaphore_ mutex initialized to 1
+    - Each process must **wait(mutex)** before entering the CS
+    - and **signal(mutex)** afterward
+- If this sequence is not observed
+    - two processes _may be in_ their critical sections _simultaneously_
+### Situation 1:
+- Note that the difficulty arises
+    - even if a signal process is not well behaved
+- Suppose that a program _interchanges the order_
+    - in which **wait()** and **signal()** on the semaphore **mutex** are executed
+```c
+signal(mutex);
+    ...
+    ciritcal section
+    ...
+wait(mutex);
+```
+### Situation 2 & 3
+- Suppose that a program replaces _signal()_ with _wait()_
+- Suppose that a process omitss the **wait()**, or the **signal()**, or both of them
+    - 해줘야 하는 위치에서 안해주면
+### How to deal with these kinds of difficulties?
+- These situations ma y be caused
+    - by an honest programming error or an uncooperating programmer
+- Various types of errors can be generated easily
+    - when programmers use semaphores (or mutex locks) incorrectly
+- INcorporate simple synchronization tools
+    - as high-level language constructs
+    - _monitor_: one fundamental high-level synchronization struct
+### A monitor type is
+- an ADT that includes a set of _programer-defined operations_
+    - that provided with mutual exclusion wiin the _monitor_
+- declare the variables
+    - whose values define the _state of an instatnce_ of that type
+    - along with the bodies of _function_ that operate on those _variables_<br>
+<img src="./img/pseducode_monitor.png" width="50%"><br>
+<img src="./img/motitor_structure.png" height="30%"><br>
+
+### Conditional Variables
+- The monitor construct is not sufficiently powerful
+    - for modeling some synchronization schemes
+- We need to define the _condition_ construct
+    - to provide additional synchronization mechanisms
+### Using conditional variables:
+```
+condition x, y;
+x.wait();
+x.signal();
+```
+<br>
+<img src="./img/monitor_with_x_y.png" height="30%"><br>
+
+### Java Monitors
+- Java provides a _monitor-like_
+    - concurrency mechanism for thread synchronization
+    - called as monitor-lock or intrinsic-lock
+- Basic language constructs for Java Synchronization
+    - ***synchronized*** keyword
+    - ***wait()*** and ***notify()*** method
+
+### synchronized keyword
+- 임계영역에 해당하는 코드 블록을 선언할 떄 사용하는 자바 키워드
+- 해당 코드 블럭(임계영역)에는 모니터락을 획득해야 진입 가능
+- 모니터락을 가진 객체 인스턴스를 지정할 수 있음
+- 메소드에 선언하면 메소드 코드 블록 전체가 임계영역으로 지정됨
+    - 이때, 모니터락을 가진 객체 인스턴스는 this 객체 인스턴스임<br>
+<img src="./img/synchronized_keyword.png" width="70%"><br>
+
+### wait() and notify() methods:
+- java.lang.Object 클래스에 선언됨 : 모든 자바 객체가 가진 메소드임
+- 쓰레드가 어떤 객체의 wait()메소드를 호출하면
+    - 해당 객체의 모니터락을 획득하기 위해 대기 상태로 진입함
+- 쓰레드가 어떤 객체의 notify() 메소드를 호출하면
+    - 해당 객체 모니터에 대기중인 쓰레드를 _하나_ 를 깨움
+- notify() 대신에 notifyAll() 메소드를 호출하면
+    - 해당 객체 모니터에 대기중인 쓰레드를 _전부_ 깨움
+### Java Synchronization e.g. 1
+<img src="./img/java_syc_monitor_ex.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex2.png" width="70%"><br>
+
+- 심각한 동기화 문제, race condition 발생
+    - 모니터 락으로 해결
+### Java Synchronization e.g. 2
+<img src="./img/java_syc_monitor_ex_1.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex2.png" width="70%"><br>
+
+- 잘되네
+- critical section만 synchronized 로 묶어 버림
+- 다 해버리면 장점이 사라짐
+
+### Java Synchronization e.g. 3
+<img src="./img/java_syc_monitor_ex_3.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex2.png" width="70%"><br>
+
+### Java Synchronization e.g. 4
+<img src="./img/java_syc_monitor_ex_4.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex_4_2.png" width="70%"><br>
+
+- counter 를 공유해야지만 동기화 문제가 발생하니까 static 변수로 사용
+- 이건 동기화 문제 발생
+- synchronized 블락은 this를 통해 자기참조를 함
+    - 5개의 Thread는 각 instance를 가짐
+- 객체가 달라지면 monitor가 달라지는 거임
+- 자기 혼자만 동기화 되니까 동기화 안댐
+
+### Java Synchronization e.g. 5
+<img src="./img/java_syc_monitor_ex_4.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex_5_2.png" width="70%"><br>
+
+- this 를 모두 공유하게 만듬
+
+## Liveness
+### Liveness
+- Two criteria for the CSP: the progress and bounded-waiting
+    - Semaphores and monitors cannot solve these requirements
+- _Liveness_ refers to
+    - a set of properties that a sysytem must satisfy
+    - to ensure that processes make progress during their execution cycle
+- Two situations that can lead to liveness failures 
+    - _deadlock_ and _priority inversion_
+### Deadlock
+- a situation where two or more processes are _Waiting indefinitely_
+    - for an event that _can be caused only by_ one of the _waiting process_
+    - e.g.<br>
+        <img src="./img/ex_for_deadlock.png" width="40%"><br>
+    - 8장가면 계속 나올거임
+### Priority Inversion : 우선순위 역전
+- A situation where a higher-priority processes have to wait
+    - for a lower-priority one to finish ther resource
+- It can arise when a _higher_-priority process
+    - need to _read or modify kernel data_
+    - that are currently being accessed by a _lowre-priority_ process
+- Typically, priority inversion is avoided
+    - by implementing a _priority-inheritance_ protocal
+- All processes accessing resources needed by a higher-priority process
+    - inherit the higher priority
+    - until they release that resources
+
+
+
+- liveness 정도가 있다 는 정도는 알아야 할듯
