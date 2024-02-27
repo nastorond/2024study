@@ -278,3 +278,355 @@ class RunnableTwo implements Runnable {
   - 어떤 kernel 모드가 진입하면 다시 내려놓기 전까지 CPU를 쓰기 때문에 context switch가 발생하지 않음
   - 때문에, race conditions 문제가 발생하지 않음
   - 하지만, 성능이 좋지 않기 때문에 요즘엔 거의 사용하지 않음
+
+## Peterson's Solution
+
+### Software Sols to the Critical-Section Prob:
+- Dekker's Algorithm
+  - for two processes 
+- Eisnberg and McGuire's Algorithm
+  - for n processes with a lower bound on waiting of n - 1 turns
+- Bakery Algo
+  - 레슬리 램포트가 제안한 알고리즘
+- ***Peterson's Algorithm***  
+  &rarr; a classic software solution to the critial-section problem
+  - no guarantees that Peterson’s solution will work correctly,
+  - since modern computers perform basic machine-language instructions
+  - such as *load* and *store*
+
+### Peterson's solution
+- restricted to two processes that alternate execution
+  - between their critical sections and remainder sections
+  ```c
+  int turn;
+  bool flag[2];
+
+  while (ture) {
+    flag[i] = true;
+    turn = j;
+    while (flag[j] && turn == j)
+      ;
+      /* critical section */
+    flag[i] = false;
+      /* remainder section */
+  }
+  ```
+- 데이터가 공유되는 지점에서 충돌(race condition)이 일어날 것으로 예상될 때, entry section 과 exit section을 만들어 문제 해결
+- flag를 통해 관리
+- 산책을 시키려하는데 2마리의 개가 자꾸 싸우니까 flag를 꽂아서 내가 산책 나간다고 표시  
+&rarr; 상대방이 산책중이면 기다렸다가 끝나면 내가 산책
+
+### simple implementation of Peterson's solution
+```c
+#include <stdio.h>
+#include <pthread.h>
+#define true 1
+#define flase 0
+
+int sum = 0;
+int turn;
+int flag[2];
+
+void *producer(void *param) {
+  int k;
+  for (k=0; k<10000; k++) {
+    /* entry section */
+    flag[0] = true;
+    turn = 1;
+    while (flag[1] && turn == 1)
+      ;
+    /* critical section */
+    sum++;
+
+    /* exit section */
+    flag[0] = false;
+
+    /* remainder section*/
+  }
+  pthread_exit(0);
+}
+
+void *consumer(void *param) {
+  int k;
+  for (k=0; k<10000; k++) {
+    /* entry section */
+    flag[1] = true;
+    turn = 0;
+    while (flag[0] && turn == 1)
+      ;
+    /* critical section */
+    sum--;
+
+    /* exit section */
+    flag[1] = false;
+
+    /* remainder section*/
+  }
+  pthread_exit(0);
+}
+
+int main() {
+  pthread_t tid, tid2;
+  pthread_create(&tid1, NULL, producer, NULL);
+  pthread_create(&tid2, NULL, consumer, NULL);
+  pthread_join(tid1, NULL);
+  pthread_join(tid2, NULL);
+  printf("sum= %d\n", sum);
+}
+
+```
+&rarr; 0,0,0,-13,-9 ...
+&rarr; 횟수를 높일수록 결과가 0으로 나오지 않고 튀는 경우가 많아짐
+
+### What happen?
+- Threre are *no guarantees* that
+  - Peterson's solution _will work correctly_
+  - if the architecture perform basic machine-language instructions,
+  - such as **load** and **store**
+- 그럼에도 Peterson's solution을 사용하는 이유
+  -  algorithmic description of solving the CSP이 좋음 &rarr; 이해하기가 쉬움
+  - illustrates some of the complexities involved in the requirements of _mutual exclusion_, _progress_, and _bounded waiting_
+
+### Peterson's solution is provably correct
+- **Mutual exclusion** in preserved
+  - Note that each $P_i$ enters its critical section
+  - only if either flag[j] == flase or turn == i
+  - 동시에 크리티컬 섹션에 들어가지 않는 것을 보장
+- The *progress* requiremet is satisfied(**No deadlock**)
+- The *bounded-waiting* requirement is met(**No starvation**)
+- 상호배제, 데드락, 기아를 해결할 수 있는 솔루션
+
+## Hardware Support for Synchronization
+
+### Hardware-based Solutions
+-  critical-section problem 해결을 위한 하드웨어 지원 필요
+  - instruction이 제공되었을 때 동기화 도구로 직접 사용하면 좋음
+  - more abstract mechanisms의 기초를 형성하는 데 사용 가능
+
+- Three primitive operations
+  - ***memory barriers or fences***
+  - ***hardware instructions***
+  - ***atomic variables***
+
+### Atomicity(원자성)
+- Atom - 더이상 쪼갤 수 없는 물리적 성분
+- An _atomic operation_ is one _uninterruptible unit_ of operation
+- Modern computer system provide _special hardware instructions_
+  - e.g. _atomic instructions_
+  - that allow us either to _test and modify_ the content of a word
+  - or to _test and swap_ the contents of two words
+- instruction 자체를 atomic한 instruction으로 만들자
+  - 클락을 쪼개지 말고 한방에 해결되도록 회로를 구성
+
+### Two types of conceptual atomic instructions:
+- **test_and_set()**
+- **compare_and_swap()**
+
+### test_and_set() instruction:
+```c
+boolean test_and_Set(boolean *target) {
+  boolean rv = *target;
+  *target = true;
+  return rv;
+}
+```
+
+
+- target 값을 true / false로 바꾸는 hardware instruction가 있을때,
+- A global Boolean varialbe _lock_
+  - is declared and initialized to _false_  
+&rarr; 코드의 중간에서 interrupt가 발생하지 않음
+
+
+```c
+do {
+while (test_and_set(&lock)) // 상호배제 가능 -> context switch가 안 일어남 
+    ; /* do nothing */
+
+    /* critical section */
+
+lock = false;
+
+    /* remainder section */
+} while (true);
+```
+- mutual exclusion은 확실하게 보장됨
+- critical section에 동시 진입하는 일은 사라짐
+- deadlock이나 starvation은 앞으로도 해결되는 solution은 없음
+
+### The compare_and_swap() instruction:
+```c
+int compare_and_swap(int *value, int expected, int new_value) {
+  int temp = *value;
+  if (*value == expected) 
+    *value = new_value;
+
+  return temp;
+}
+```
+
+- A global Inteager variable _lock_
+  - is declared and initialized to 0
+```c
+while (true) {
+  while (compare_and_swap(&lock, 0, 1) != 0)
+    ; /* do nothing */
+
+    /* critical section */
+
+  lock = 0;
+
+    /* remainder section */
+}
+```
+
+### Atomic Variable
+- compare_and_swap instruction을 _atomic variable_ 와 같은 construction other tools을 만드는 도구로 사용할 수 있음.
+- An _atomic variable_ provides
+  - atomic operations on basic data types such as integers and Booleans
+  - can be used to ensure mutual execlusion in situations
+  - where there may be a _single variable_ with _race condition_
+
+### Java implementation of Peterson's solution
+
+```java
+public class Peterson1 {
+
+  static int count = 0;
+  
+  static int turn = 0;
+  static boolean[] flag = new boolean[2];
+
+  public static void main(String[] args) throws Exception {
+    Thread t1 = new Thread(new Producer());
+    Thread t2 = new Thread(new Consumer());
+    t1.start(); t2.start();
+    t1.join(); t2.join();
+    System.out.printIn(Peterson1.count);
+  }
+}
+
+static class Producer implements Runnable {
+  @Override
+  public void run() {
+    for (int k = 0; k < 10000; k++) {
+      /* entry section */
+      flag[0] = true;
+      turn = 1;
+      while (flag[1] && turn == 1)
+        ;
+
+      /* critical section */
+      count++;
+      
+      /* exit section */
+      flag[0] = false;
+
+      /* remainder section */
+      }
+    }
+  }
+
+static class Consumer implements Runnable {
+  @Override
+  public void run() {
+    for (int k = 0; k < 10000; k++) {
+      /* entry section */
+      flag[1] = true;
+      turn = 0;
+      while (flag[0] && turn == 0)
+        ;
+
+      /* critical section */
+      count--;
+      
+      /* exit section */
+      flag[1] = false;
+
+      /* remainder section */
+    }
+  }
+}
+```
+- -1,-1,-1,2,2,2,0,0 ...
+- 10만번 실행 시, 데드락 걸려서 결과가 나오지 않음
+- entry section에서 context switch가 일어날 때 race condition이 같이 발생해서 오류가 발생
+- java에서 제공하는 AtomicBoolean 함수를 통해 버그 해결
+
+```java
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class Peterson2 {
+
+  static int count = 0;
+  
+  static int turn = 0;
+  static AtomicBoolean[] flag;
+  static {
+    flag = new AtomicBoolean[2];
+    for (int i = 0; i < flag.length; i++)
+      flag[i] = new AtomicBoolean();
+  }
+
+}
+
+static class Producer implements Runnable {
+  @Override
+  public void run() {
+    for (int k = 0; k < 10000; k++) {
+      /* entry section */
+      flag[0].set(true);
+      turn = 1;
+      while (flag[1].get() && turn == 1)
+        ;
+        
+      /* critical section */
+      count++;
+      
+      /* exit section */
+      flag[0].set(false);
+
+      /* remainder section */
+    }
+  }
+}
+
+static class Consumer implements Runnable {
+  @Override
+  public void run() {
+    for (int k=0; k< 10000; k++) {
+      /* entry section */
+      flag[1].set(true);
+      turn = 0;
+      while (flag.get() && turn == 0)
+        ;
+      /* critical section */
+      count--;
+      
+      /* exit section */
+      flag[1].set(false);
+
+      /* remainder section */
+    }
+  }
+}
+```
+- 0, 0, 0, 0, 0, 0, ...
+- 오류가 안나고 거의 같은 값이 나옴
+
+### 마무리
+- race condition : 공유된 자원(shared data)에 여러 프로세스가 엑세스 하려할 때
+    - 공유된 자원의 영역 : critical-section
+    - 보호하기 위해 : Synchronization problem
+    - 진입을 위한 : entry-section
+    - 나오기 위한 : exit-section
+    - non-critical section : remainder-section
+- 해결하기 위한 가장 기본적인 방법
+    - 상호배제
+    - progress, 데드락 방지
+    - bounded waiting 한정적 대기, 기아 방지
+- Peterson's solution
+    - 상호배제 해결 방법 :
+        - 뮤텍스
+        - 세마토어
+        - 모니터
