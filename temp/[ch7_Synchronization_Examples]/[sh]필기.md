@@ -146,3 +146,114 @@ int read_count = 0;
 - notifyAll 은 젤 앞에있는거 하나만 readyqueue에 넣는게아니라 전부 경쟁해서 들어가게함
     - 공평하게 들어가게 할라고 한거임
 
+# 철학자들은 왜 굶어 죽었을까?
+## Classic Probs of Synchronization
+### The _DIning-Philosophers_ Prob
+- Consider _five philosophers_ who spend their lives _thinking_ and _eating_
+    - share _five single chopsticks_
+- Sometimes, a philosopher gets hungry
+    - and tries to pick up _two chopsticks_ that are closet to her
+- When a hungry philosopher has _both her chopsticks_ at the same time
+    - she eats _without releasing_ the chopsticks<br>
+<img src="./img/5_philosophers.png" width="30%"><br>
+
+- need to allocate _several resources_ among _several processes_
+    - in a _Deadlock-free_ and _starvation-free_ manner
+    - 다 다른 리소스, 프로세스임
+    - 지금까지 상호배제를 만들어주는건 많이 함
+    - 근데 데드락, 기아 문제는 해결 못해봄
+
+### Semaphore Sol
+- One simple sol. is to represent each chopsitck with a semaphore
+    - A philosopher _acquires_ a chopsitck by executing a _wait()_ operation
+    - She _realease_ her chopsticks by executing a _signal()_ operation<br>
+    <img src="./img/The_structure_of_philosoper_i.png" width="70%"><br>
+### The prob of _deadlock_ and _starvation_
+- Simple semaphore sol. guarantees _mutual exclusion_
+- However, how about deadlock or starvation?
+    - Suppose that all five philosophers become hungry at the same time
+    - and each grabs her left chopsticks, trying to grab her right chopstick
+    - Here comes a deadlock situation
+### Possible _Remedies_ to the deadlock prob
+- Allo _at most four philosophers_ to be sitting simultaneously at the table
+    - 철학자의 숫자를 제한할 수 없으면 못할듯
+- Allow a philosopher to pick up her chopsticks
+    - only if _both chopsticks_ are available
+- Use an _asymmetric_ sol.
+    - an _odd-numbered_ philosopher picks up first her _left chopsticks_ and then her _right chopstick_
+    - whereas an _even-numbered_ philosopher picks up her _right chopstick_ and the her _left chopstick_
+    - 동시에 잡는건 아님(상호배제 상태이니까) 그래서 식사 가능
+- Note that a deadlock-free sol.
+    - does not necessarily eliminate the possibility of _starvation_
+    - deadlock은 방지하는 비용이 너무 커 그니까 피하고 발생하면 해갸ㅕㄹ하자
+
+### Monitor Sol.
+- 양쪽의 젓가락이 가능할 때만 집게하는거. 위에 두번째꺼
+- Let a philosopher to pick up her chopstick
+    - only if _both_ of them are _available_
+- We need to distinguish among _three states_ of the philosophers
+    - _thinking, hungry,_ and _eating_
+- A philosopher can _Set_ her state to be _eating_
+    - only if her _two neihbors_ are _not in_ the state of _eating_
+- We also need a _condition variable_ which
+    - allows philosopher to _delay_ herself when she is _hungry_
+    - but is _unable to obtain_ the chopsticks she needs
+### Sol. to the Dining-Philosophers Prob
+- The distribution of the chopsticks
+    - is controlled by the monitor, ***Dining Philosopher***
+- Each philosopher must to invoke the operation _pickup()_
+    - before starting to eat, suspending the philosopher process
+- After the successful comletion of pickup()
+    - the philosopher may eat, and invokes the operation _putdown()_
+- Note that
+    - _mutual exclusion_ is guaranteed and _no deadlocks_ wil occur
+    - however, _starvation_ is still _possible_
+
+<br>
+<br>
+<img src="./img/a_monitor_sol_to_the_diningprob.png" width="70%"><br>
+
+### Pthread sol. to the Dining-Philosophers Prob
+<img src="./img/pthread_sol_dinimng_prob_1.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_2.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_3.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_4.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_5.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_6.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_7.png" width="70%"><br>
+
+- 5만 명에서 죽었는데, 아마 thread 생성단에서 생긴듯
+- deadlock 생성은 pickup 할때랑 putdown 할때 lock 을  안해버리면 댐
+    - 아마 eat 하는 시간이랑, think 하는 시간이 길어서 그런듯
+    - deadlock 안걸리는데 ㅋㅋ 아마 걸리는게 맞을듯
+- 자바가 어디갔지.. 
+
+## 7.5 Alternative Approaches
+### Thread-Safe Concurrent Applications
+- _Concurrent applications_ have good peformance on multicore systems
+    - using techniques such as _mutex locks, semaphores,_ and _monitors_
+- However, they present an increased risk of
+    - _race conditions_ and _liveness harzards_ such as _deadlock_
+- There are alternative approaches
+    - for the design of _thread-safe concurrent_ applications
+
+1. Transactional Memory
+    - atomic operation, 입 / 출금, 메모리 영역 자체를 트랜젝션하게 만드는 거
+2. OpenMP
+    - #pragma omp 이렇게 배움
+    - #pragma omp critical 하면 critical section 으로 만들어버림
+3. Functional Programming Language
+    - 함수형 프로그래밍을 하면 이런일이 아예 발생을 안함
+    - 이건 다 명령형(imperative) 프로그래밍을 해서 그럼
+        - 명령형은 cpu가 있고 memory가 있고 뭐 그런거
+    - Scalar, E?, hasckl, pyhton, java 뭐 이런거
+        - 모든 것을 다 함수로
+        - 함수로 다 해버림
+        - 함수 만능설
+        - 둘이 완전 다름
+            - 영어랑 한국어가 다른것처럼 다름
+            - 사고방식 자체가 우리와 아예 다릅니다.
+        - 하드웨어 속도로 다 커버칠 수 있으니까 상관없음 ㅋㅋ
+        - 그니까 기회되면 공부해봐라
+
+
