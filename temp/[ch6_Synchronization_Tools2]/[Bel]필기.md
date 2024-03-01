@@ -240,7 +240,7 @@ int main()
 ### 마무리
 - Binary Semaphore 와 Counting Semaphore는 모두 locking에 기반함
 
-## 모니터와 자바 동기화
+# 모니터와 자바 동기화
 ### The difficulty of using semaphores
 - semaphore는 편리하고 효과적이지만 timing error(programming error)가 자주 발생함
 - 어떤 특정 sequence를 잘못 쓰면 항상 발생하는 것도 아니고 잡기도 어려운 문제가 자주 발생함
@@ -354,5 +354,7 @@ public synchronized void add(){
     - 리모콘을 놓고 갈 때까지 아빠가 기다림...
 - 해결법
   - priority-inheritance protocol
-    - 엄마를 불러라...
     - low priority를 high priority로 복사해줘라
+    - 엄마를 불러라...
+
+### 마무리
