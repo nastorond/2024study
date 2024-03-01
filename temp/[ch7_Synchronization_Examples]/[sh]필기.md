@@ -26,7 +26,7 @@ semaphore empty = n;
 semaphore full = 0;
 ```
 <br>
-<img src="./img/structer_of_producer_and_cunsumer_processes.png" width="70%"><br>
+<img src="./img/structer_of_producer_and_cunsumer_processes.png" width="60%"><br>
 
 - 완벽히 대칭구조가 맞춰져 있어야 가능
 - 어려워서 안씀 ㅋ
@@ -72,7 +72,7 @@ int read_count = 0;
 - **read_count** keeps trap of
     - how many processes are currently reading the object<br>
 
-<img src="./img/structure_fo_reader_and_writer.png" width="70%"><br>
+<img src="./img/structure_fo_reader_and_writer.png" width="40%"><br>
 
 ### Solution to Readers-Writers Prob
 - Note that, if _a writer_ is in the _critical section_, and _n_ readers are waiting
@@ -97,9 +97,9 @@ int read_count = 0;
 - 개념만 살펴볼거임 뒤에서
 ### PThread solution to the Bounded-Buffer Prob
 
-<img src="./img/pthtread_sol_bounded_buffer_prob.png" width="70%"><br>
-<img src="./img/producer_and_consumer_pthread.png" width="70%"><br>
-<img src="./img/insert_item_and_remove_item_pthread.png" width="70%"><br>
+<img src="./img/pthtread_sol_bounded_buffer_prob.png" width="40%"><br>
+<img src="./img/producer_and_consumer_pthread.png" width="40%"><br>
+<img src="./img/insert_item_and_remove_item_pthread.png" width="40%"><br>
 
 - producer 하고 producer 실행 되는 경우가 간혹 있음
 - consumer 후 consumer 역시 발생
@@ -114,12 +114,12 @@ int read_count = 0;
 
 
 ### Java solution to the Bounded-Buffer Prob
-<img src="./img/java_sol_bounded_buffer_1.png" width="70%"><br>
-<img src="./img/java_sol_bounded_buffer_2.png" width="70%"><br>
-<img src="./img/java_sol_bounded_buffer_3.png" width="70%"><br>
-<img src="./img/java_sol_bounded_buffer_4.png" width="70%"><br>
-<img src="./img/java_sol_bounded_buffer_5.png" width="70%"><br>
-<img src="./img/java_sol_bounded_buffer_6.png" width="70%"><br>
+<img src="./img/java_sol_bounded_buffer_1.png" width="40%"><br>
+<img src="./img/java_sol_bounded_buffer_2.png" width="40%"><br>
+<img src="./img/java_sol_bounded_buffer_3.png" width="40%"><br>
+<img src="./img/java_sol_bounded_buffer_4.png" width="40%"><br>
+<img src="./img/java_sol_bounded_buffer_5.png" width="40%"><br>
+<img src="./img/java_sol_bounded_buffer_6.png" width="40%"><br>
 
 - 자바는 동기화 굉장히 간단
 - instance 가 monitor lock 을 획득해서 따로따로 돌아감
@@ -139,9 +139,9 @@ int read_count = 0;
     - 마킹 해놓고 돌리면 다른 결과가 나올거같네요
 
 ### Java solution to the first Readers-Writers Prob
-<img src="./img/shared_db_in_java_1.png" width="70%"><br>
-<img src="./img/shared_db_in_java_2.png" width="70%"><br>
-<img src="./img/shared_db_in_java_3.png" width="70%"><br>
+<img src="./img/shared_db_in_java_1.png" width="40%"><br>
+<img src="./img/shared_db_in_java_2.png" width="40%"><br>
+<img src="./img/shared_db_in_java_3.png" width="40%"><br>
 
 - notifyAll 은 젤 앞에있는거 하나만 readyqueue에 넣는게아니라 전부 경쟁해서 들어가게함
     - 공평하게 들어가게 할라고 한거임
@@ -167,7 +167,7 @@ int read_count = 0;
 - One simple sol. is to represent each chopsitck with a semaphore
     - A philosopher _acquires_ a chopsitck by executing a _wait()_ operation
     - She _realease_ her chopsticks by executing a _signal()_ operation<br>
-    <img src="./img/The_structure_of_philosoper_i.png" width="70%"><br>
+    <img src="./img/The_structure_of_philosoper_i.png" width="40%"><br>
 ### The prob of _deadlock_ and _starvation_
 - Simple semaphore sol. guarantees _mutual exclusion_
 - However, how about deadlock or starvation?
@@ -211,16 +211,16 @@ int read_count = 0;
 
 <br>
 <br>
-<img src="./img/a_monitor_sol_to_the_diningprob.png" width="70%"><br>
+<img src="./img/a_monitor_sol_to_the_diningprob.png" width="40%"><br>
 
 ### Pthread sol. to the Dining-Philosophers Prob
-<img src="./img/pthread_sol_dinimng_prob_1.png" width="70%"><br>
-<img src="./img/pthread_sol_dinimng_prob_2.png" width="70%"><br>
-<img src="./img/pthread_sol_dinimng_prob_3.png" width="70%"><br>
-<img src="./img/pthread_sol_dinimng_prob_4.png" width="70%"><br>
-<img src="./img/pthread_sol_dinimng_prob_5.png" width="70%"><br>
-<img src="./img/pthread_sol_dinimng_prob_6.png" width="70%"><br>
-<img src="./img/pthread_sol_dinimng_prob_7.png" width="70%"><br>
+<img src="./img/pthread_sol_dinimng_prob_1.png" width="40%"><br>
+<img src="./img/pthread_sol_dinimng_prob_2.png" width="40%"><br>
+<img src="./img/pthread_sol_dinimng_prob_3.png" width="40%"><br>
+<img src="./img/pthread_sol_dinimng_prob_4.png" width="40%"><br>
+<img src="./img/pthread_sol_dinimng_prob_5.png" width="40%"><br>
+<img src="./img/pthread_sol_dinimng_prob_6.png" width="40%"><br>
+<img src="./img/pthread_sol_dinimng_prob_7.png" width="40%"><br>
 
 - 5만 명에서 죽었는데, 아마 thread 생성단에서 생긴듯
 - deadlock 생성은 pickup 할때랑 putdown 할때 lock 을  안해버리면 댐
