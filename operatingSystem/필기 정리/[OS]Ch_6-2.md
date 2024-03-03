@@ -21,7 +21,7 @@
 - a progress must _acquire_ the ***lock*** before _entering_ a critical section : 열쇠 획득
 - _release_ the ***lock*** when it exits the critical section : 열쇠 반납
 
-<img src="./img/mutex_lock.png" width=""><br>
+<img src="./img/mutex_lock.png" width="200px"><br>
 
 ### Two functions and one variable for the Mutex Locks:
 - acquire() and release()
@@ -33,7 +33,7 @@
     - if the lock is available or not
 
 ### The definition of acquire() and release():<br>
-<img src="./img/define_acquire_release.png" width="70%"><br>
+<img src="./img/define_acquire_release.png" width="500px"><br>
 
 
 ### Busy waiting : 바쁜대기
@@ -109,7 +109,7 @@ int main()
         - in the wait() and signal() operations must be executed _atomically_
 
 ### Definition of wait() and signal()
-<img src="./img/Definition_of_wait()_and_signal().png" width="50%"><br>  
+<img src="./img/Definition_of_wait()_and_signal().png" width="500px"><br>  
 
 - S를 n으로 설정하고 n을 쭉 감소시키다가 S=0 이 되면 진입을 막음
 - n 개의 instance를 가진 자원을 서로 공유할 때 사용
@@ -145,7 +145,7 @@ int main()
 - When other process executes the **signal()** operation
     - waiting processes can be _restarted(wake up)_ and placed into the _ready queue_
 
-<img src="./img/impl_semaphores.png" width="70%"><br>
+<img src="./img/impl_semaphores.png" width="600px"><br>
 
 ```c
 void *counter (void *param)
@@ -261,8 +261,8 @@ wait(mutex);
     - whose values define the _state of an instatnce_ of that type
     - along with the bodies of _function_ that operate on those _variables_<br>
 
-<img src="./img/pseducode_monitor.png" width="50%"><br>
-<img src="./img/motitor_structure.png" height="30%"><br>
+<img src="./img/pseducode_monitor.png" width="300px"><br>
+<img src="./img/motitor_structure.png" width="400px"><br>
 
 - 구조
     - Monitor
@@ -284,7 +284,7 @@ x.signal();
 - One can define one or more variables of type condition
 - **condition variable**에서 호출할 수 있는 작업은 **wait() and signal()** 뿐
 
-<img src="./img/monitor_with_x_y.png" height="30%"><br>
+<img src="./img/monitor_with_x_y.png" width="400"><br>
 
 ### Java Monitors
 - Java provides a _monitor-like_
@@ -324,27 +324,27 @@ public synchronized void add(){
   - 해당 객체 모니터에 대기중인 쓰레드 전부를 깨움
 
 ### Java Synchronization e.g. 1
-<img src="./img/java_syc_monitor_ex.png" width="70%"><br>
-<img src="./img/java_syc_monitor_ex2.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex.png" width="400"><br>
+<img src="./img/java_syc_monitor_ex2.png" width="400"><br>
 
 - 심각한 동기화 문제, race condition 발생
     - 모니터 락으로 해결
 
 ### Java Synchronization e.g. 2
-<img src="./img/java_syc_monitor_ex_1.png" width="70%"><br>
-<img src="./img/java_syc_monitor_ex2.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex_1.png" width="400"><br>
+<img src="./img/java_syc_monitor_ex2.png" width="400"><br>
 
 - 원하는 대로 작동
 - critical section만 synchronized 로 묶어 버림
 - 전체를 묶으면 장점이 사라짐
 
 ### Java Synchronization e.g. 3
-<img src="./img/java_syc_monitor_ex_3.png" width="70%"><br>
-<img src="./img/java_syc_monitor_ex2.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex_3.png" width="400"><br>
+<img src="./img/java_syc_monitor_ex2.png" width="400"><br>
 
 ### Java Synchronization e.g. 4
-<img src="./img/java_syc_monitor_ex_4.png" width="70%"><br>
-<img src="./img/java_syc_monitor_ex_4_2.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex_4.png" width="400"><br>
+<img src="./img/java_syc_monitor_ex_4_2.png" width="400"><br>
 
 - counter 를 공유해야지만 동기화 문제가 발생하니까 static 변수로 사용
 - 동기화 문제 발생
@@ -354,8 +354,8 @@ public synchronized void add(){
 - 자기 혼자만 동기화 되니까 동기화 안댐
 
 ### Java Synchronization e.g. 5
-<img src="./img/java_syc_monitor_ex_4.png" width="70%"><br>
-<img src="./img/java_syc_monitor_ex_5_2.png" width="70%"><br>
+<img src="./img/java_syc_monitor_ex_4.png" width="400"><br>
+<img src="./img/java_syc_monitor_ex_5_2.png" width="400"><br>
 
 - this 를 모두 공유
 
@@ -370,7 +370,7 @@ public synchronized void add(){
     - _deadlock_ and _priority inversion_
 
 ### Deadlock
-<img src="./img/ex_for_deadlock.png" width="40%"><br>
+<img src="./img/ex_for_deadlock.png" width="300px"><br>
 
 - a situation where two or more processes are _Waiting indefinitely_
     - for an event that _can be caused only by_ one of the _waiting process_
