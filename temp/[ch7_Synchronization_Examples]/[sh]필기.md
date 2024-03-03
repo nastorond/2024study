@@ -14,7 +14,7 @@
     - The consumer _produces empty buffers_ for the producer
 ### Shared Data Structers:
 - A binary semaphore **mutex**
-    - provides _mutual exclusion_ of accesses to the buffer pool
+    - provides _mutual exclusion_ for accesses to the buffer pool
     - and is _initialized_ to the value 1
 - 2 _counting semaphores_ **empty** and **full**
     - are used to _count_ the number of _empty_ and _full_ buffers
@@ -48,7 +48,7 @@ semaphore full = 0;
 ### Some Variations of the Readers-Writers Probs
 - _Priorities_ are involved with all the variations
 - The _first_ readers-writers prob
-    - _No readers_ should _wait_ for other readers to finish
+    - _No reader_ should _wait_ for other readers to finish
     - simply beacuse a _writer_ is _waiting_
     - reader 와 writer에게 공평한 권한을 줘서 access 하게 해 줘야함
 - The _second_ readers-writers prob
@@ -67,9 +67,9 @@ int read_count = 0;
 // reader의 갯수가 0이 되면 진입하게 하는거
 ```
 - **rw_mutex** is _common_ to both readers and writers
-- **mutex** is used to ensuer _mutual exclusion_
+- **mutex** is used to ensure _mutual exclusion_
     - when the variable **read_count** is updated
-- **read_count** keeps trap of
+- **read_count** keeps track of
     - how many processes are currently reading the object<br>
 
 <img src="./img/structure_fo_reader_and_writer.png" width="40%"><br>
