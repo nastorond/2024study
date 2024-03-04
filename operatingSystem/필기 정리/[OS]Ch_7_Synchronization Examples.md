@@ -199,6 +199,90 @@ semaphore full = 0;
 ### Semaphore Solution
 <img src="./img/The_structure_of_philosoper_i.png" width="400"><br>
 
-- One simple solution is to represent each chopsitck with a semaphore
-    - A philosopher _acquires_ a chopsitck by executing a _wait()_ operation
+- One simple solution is to represent each chopstick with a semaphore
+    - A philosopher _acquires_ a chopstick by executing a _wait()_ operation
     - She _realease_ her chopsticks by executing a _signal()_ operation<br>
+    ```c
+    semaphore chopstick[5];
+
+    while(true) {
+        wait(chopstick[i]);
+        wait(chopstick[(i + 1) % 5]);
+
+        /* eat for a while */
+
+        signal(chopstick[i]);
+        signal(chopstick[(i + 1) % 5]);
+
+        /* think for awhile */
+    }
+    ```
+
+### The problem of _deadlock_ and _starvation_
+- Simple semaphore solution guarantees mutual exclusion
+- However, how about deadlock or starvation?
+    - Suppose that all five philosophers become hungry at the same time
+    - and each grabs her left chopstick, trying to grab her right chopstick
+
+### Possible remedies to the deadlock problem
+- Allow _at most four philosophers_ to be sitting simultaneously at the table
+    - But, 철학자의 수를 제한할 수 없는 경우 사용할 수 없음
+- Allow a philosopher to pick up her chopsticks 
+    - only if _both chopsticks_ are available
+- Use an _asymmetric_ solution:
+    - an _odd-numbered_ philosopher picks up first her left chopstick and then her right chopstick,
+    - whereas an _even-numbered_ philosopher picks up her right chopstick and the her left chopstick
+    - 동시에 잡는 것은 아님(상호배제)
+    - 따라서 식사 가능
+- Note that a deadlock-free solution 
+    - does not necessarily eliminate the possibility of _starvation_
+    - deadlock 방지 비용이 너무 크기 때문에 발생했을 때 해결하는 방법 사용
+
+### Monitor Solution
+- 양쪽 모두 사용 가능 할 때만 사용할 수 있도록 하는 방법
+- Let a philosopher to pick up her chopsticks
+    - only if _both_ of them are _available_
+- We need to distinguish among _three states_ of the philosophers:
+    - thinking, hungry, and eating. 
+- A philosopher can set her state to be eating, 
+    - only if her _two neighbors_ are not in the state of eating.
+- We also need a _condition variable_ which
+    - allows a philosopher to delay herself when she is hungry
+    - but is unable to obtain the chopsticks she needs
+
+### Solution to the Dining-Philosophers Problem
+- The distribution of the chopsticks 
+    - is controlled by the monitor, ***DiningPhilosopher***
+- Each philosopher must to invoke the operation _pickup()_,
+    - before starting to eat, suspending the philosopher process
+- After the successful completion of pickup(),
+    - the philosopher may eat, and invokes the operation _putdown()_
+- Note that 
+    - _mutual exclusion_ is guaranteed and _no deadlocks_ will occur,
+    - however, _starvation_ is still _possible_
+
+<img src="./img/a_monitor_sol_to_the_diningprob.png" width="400"><br>
+
+### Pthread solution to the Dining-Philosophers Problem
+<img src="./img/pthread_sol_dinimng_prob_1.png" width="400"><br>
+<img src="./img/pthread_sol_dinimng_prob_2.png" width="400"><br>
+<img src="./img/pthread_sol_dinimng_prob_3.png" width="400"><br>
+<img src="./img/pthread_sol_dinimng_prob_4.png" width="400"><br>
+<img src="./img/pthread_sol_dinimng_prob_5.png" width="400"><br>
+<img src="./img/pthread_sol_dinimng_prob_6.png" width="400"><br>
+<img src="./img/pthread_sol_dinimng_prob_7.png" width="400"><br>
+
+##  Alternative Approaches
+### Thread-Safe Concurrent Applications
+- Concurrent applications have good performance on multicore systems,
+    - using techniques such as mutex locks, semaphores, and monitors
+- However, they present an increased risk of 
+    - ***race conditions*** and ***liveness hazards*** such as _deadlock_
+- There are alternative approaches
+    - for the design of ***thread-safe*** _concurrent_ applications
+ 1. Transactional Memory
+    - atomic operation, 입 / 출금, 메모리 영역 자체를 트랜젝션하게 만드는 것
+ 2. OpenMP
+    - #pragma omp critical 하면 critical section 으로 만들어버림
+ 3. Functional Programming Language
+    - 함수형 프로그래밍하면 이런 일이 발생하지 않음
