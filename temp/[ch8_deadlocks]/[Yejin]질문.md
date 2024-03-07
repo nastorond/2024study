@@ -141,8 +141,28 @@
         - work : 5, 3, 2
         - T1의 finish True로 변경
     - i가 2일 때, 
-        - Need : 1, 0, 0
+        - Need : 6, 0, 0
         - Work : 5, 3, 2
+        - 불가능
+    - i가 3일 때,
+        - Need : 0, 1, 1
+        - Work : 5, 3, 2
+        - 가능
+        - work = work(5, 3, 2) + allocation(2, 1, 1)
+        - work : 7, 4, 3
+        - T3의 finish True로 변경
+    - i가 4일 때, 
+        - Need : 4, 3, 1
+        - work : 7, 4, 3
+        - 가능
+        - work = work(7, 4, 3) + allocation(0, 0, 2)
+        - work : 7, 4, 5
+        - T4의 finish를 True로 변경
+    - 다시 i가 0으로 변경하여 진행
+    - ***이거 처음부터 다시 풀어줘요...***
 3. work = work + allocation
-4. work가 다 finish면 그것이 safe alforithm
+4. work가 다 finish면 그것이 safe algorithm
 ### Resource-Request Algorithm
+- 새로운 request가 들어온다면?
+- ***직접해보래***
+
