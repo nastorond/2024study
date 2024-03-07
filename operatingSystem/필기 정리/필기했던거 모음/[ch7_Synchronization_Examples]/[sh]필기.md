@@ -72,7 +72,7 @@ int read_count = 0;
 - **read_count** keeps track of
     - how many processes are currently reading the object<br>
 
-<img src="./img/structure_fo_reader_and_writer.png" width="40%"><br>
+<img src="./img/structure_fo_reader_and_writer.png" width="60%"><br>
 
 ### Solution to Readers-Writers Prob
 - Note that, if _a writer_ is in the _critical section_, and _n_ readers are waiting

@@ -78,3 +78,13 @@ int read_count = 0;
 - buffer가 1개인데도 consumer가 2번 실행이 됨
 
 <img src="./img/bbp_java_solution.png" width="30%" alt="bbp_java_solution"> <br>
+- java solution도 굉장히 중요함. 여까지는 이해해야함
+
+### Java Solution to the Dining-Philosophers Problem
+- Pthread 말고 java로도 풀어보기 <br>
+<img src="./img/Java_solution.png" width=50%>
+- Lock과 ReentrantLock(재진입) 사용
+  - ReentrantLock(재진입)
+    - CPU에서 context switch가 일어나서 CPU에 다시들어감 = 재진입함
+    - 재진입을 가능하게 해주는 기능을 제공함
+  
