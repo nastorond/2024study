@@ -109,3 +109,40 @@
     - Max : 각 thread가 요청할 최대 resource instance 수
     - Allocation : currently allocated
     - Need : remaining resource
+
+    - Available[m]
+        - Available[j] == k -> k개의 instances를 available
+
+    - Max[n x m]
+        - Max[i][j] == k -> Ti가 기껏해야 k개 요청 할 것
+    - Allocation[n x m]
+        - Allocation[i][j] == k -> Ti가 Rj의 k개 인스턴스를 allocated
+    - Need[n x m]
+        - Need[i][j] == k -> Ti가 Rj의 k개 더 요청할 것
+        - Max[i][j] - Allocation[i][j]
+        - Need가 있으면 굳이 Max값이 필요하지 않음
+
+### Safety algorithm
+1. work, finish 초기화
+    - work : (3, 3, 2) -> avaliable로 초기화 진행
+    - ***Q. work가 뭐지...?***
+    - Finish : false, false, false, false, false
+2. Finish == false && Need <= Work
+    - i가 0일 때,
+        - Need : 7, 4, 3
+        - Work : 3, 3, 2
+        - 안됨
+    - i가 1일 때, 
+        - Need : 1, 2, 2
+        - Work : 3, 3, 2
+        - 가능 
+        - work = work(3, 3, 2) + allocation(2, 0, 0)
+        - ***Q. work가 뭔데 allocation을 더하는거지?***
+        - work : 5, 3, 2
+        - T1의 finish True로 변경
+    - i가 2일 때, 
+        - Need : 1, 0, 0
+        - Work : 5, 3, 2
+3. work = work + allocation
+4. work가 다 finish면 그것이 safe alforithm
+### Resource-Request Algorithm
