@@ -293,11 +293,11 @@ transaction(savings_account, checking_amount, 50.0) // T-2
 - _Need_ : A _matrix_ indicates the _remaining resource need_ of each thread
 - $Available[m]$ :
     - if $Available[j] == k$, then $k$ instances of $R_j$ are available
-- $Max[n x m]$ :
+- $Max[n$ x $m]$ :
     - if $Max[i][j] == k$, then $T_i$ may requestat most $k$ instances of $R_j$
-- $Allocation[n x m]$:
+- $Allocation[n$ x $m]$:
     - if $Allocation[i][j] == k$,  then $T_i$ is currently allocated $k$ instances of $R_j$
-- $Need[n x m]$:
+- $Need[n$ x $m]$:
     - if $Need[i][j] ==k$, then $T_i$ may need $k$ more instances of $R_j$  
 ### Safety Algorithm
 1. Let _Work_ and _Finish_ be vectors of length $m$ and $n$, respectively, Initialize $Work = Available$ and $Finish[i] = false$ for i=0, 1, ..., n-1
