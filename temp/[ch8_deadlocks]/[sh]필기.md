@@ -8,7 +8,7 @@
     - 다른애가 인터럽트를 걸어줘야 하는데 wait상태에서 못빠져 나오고 갇혀있는거
 - a situation in which
     - a _waiting thread_ (or _process_) can _never again change state_
-    - beacuse the _resources_ it has requested
+    - because the _resources_ it has requested
     - are held _by other waiting threads_(or processes)
     - 리소가 필요한데 다른애한테 점유되어있는 상테
 ### Let us consider a system
@@ -52,7 +52,7 @@ void *do_work_one(void *param)
 void *do_work_two(void *param)
 {
     // mutex 두개를 획득해서 critical section에 진입
-    // second 부터 함
+    // second 부터 진행
     pthread_mutex_lock(&second_mutex);
     pthread_mutex_lock(&first_mutex);
     /**
@@ -90,7 +90,7 @@ void *do_work_two(void *param)
 ### Resource-Allocation graph
 - 자원 할당 그래프
 - is a _directed graph_ to describe deadlocks more precisely
-- consists of a set vertices $V$ and a set of Edges $E$
+- consists of a set of vertices $V$ and a set of Edges $E$
 - Two different node types of V:
     - $T = {T_1, T_2, ..., T_n}$ : the set of all the _active threads_ in the system
     - $R = {R_1, R_2, ..., T_m}$ : the set of all the _resource types_ in the system 
@@ -99,24 +99,23 @@ void *do_work_two(void *param)
 - A directed edge : $R_j$ &rarr; $T_i$ (**assignment edge**) 할당엣지
     - signifies that an instance of $R_j$ has been _allocated to_ a thread $T_i$
     - $T_i$에 이미 할당되어 있는거임<br>
-<img src="./img/resource_allocationgraph_1.png" width="40%"><br>
+<img src="./img/resource_allocationgraph_1.png" width="70%"><br>
 <img src="./img/resource_allocationgraph_2.png" width="70%"><br>
 <img src="./img/resource_allocationgraph_3.png" width="70%"><br>
 
 - 데드락 생김 서로서로 물고있어서<br>
-
 <img src="./img/resource_allocationgraph_4.png" width="70%"><br>
 
 - 이건 발생 안함<br>
 
 ### An important observation
-- if a _resource-allocation graph_ does _not have a cycle_
+- If a _resource-allocation graph_ does _not have a cycle_
     - then the system is _not_ in a deadlocked state
 - If a _resource-allocation graph has a cycle_
     - then the system _may_ or _may not_ be in a deadlocked state
 ### Three ways of dealing with the Deadlock Problem
 - _Ignore_ the problem altogether
-    - and pretend that deadlocks never occur int the system
+    - and pretend that deadlocks never occur in the system
     - 기도메타
 - Use a protocol to _prevent_ or _avoid_ deadlocks
     - ensuring that the system will _never enter_ a deldocked state
