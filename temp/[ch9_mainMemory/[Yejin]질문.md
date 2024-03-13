@@ -23,3 +23,7 @@ a : symbolic but, 주소는 모름(컴파일러가 알고있음)
 ***Q. 컴파일러가 주소 지정해준다는거 아니였나? O/S 커널이 결정하나?***
 *** 아 COMPILER는 RELOCATION 주소 지정해주고 커널...이? LINKER? LOADER? ***
 
+## paging
+### shared pages
+***libc가 뭐지?***
+몰루 그냥 다같이 쓰는거~
