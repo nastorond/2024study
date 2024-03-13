@@ -228,8 +228,10 @@ transaction(savings_account, checking_amount, 50.0) // T-2
 
 # 데드락과 뱅커 알고리즘
 ## Deadlock Avoidance
-### The _Demerits_ of the Deadlock Prevention
+### The _Demerits(단점)_ of the Deadlock Prevention
 - It prevents deadlocks by limiting how requests can made,
     - ensuring that _at least one of the necessary conditions_ cannot occur
 - However, possible side effects of preventing deadlocks are
     - _low device utilization_ and _reduced system throughput_
+
+### Deadlock Avoidance
