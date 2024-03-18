@@ -72,6 +72,11 @@
 
 ### Locality of Reference
 참조 국부성 = 참조 지역성
+- 1개의 페이지를 실행하기 위해서 나머지 페이지에서 page fault가 일어남
+- 하지만 running중인 process에서 이런일은 거의 없음
+- Locality of Reference memory access 측면에서 봤을때는 국부성이 있음
+- reasonable한 performance를 낼 수 있음
+- 예제를 보면 이해가 쉬움
 
 ### An example of Program Structure
 ```c
@@ -81,7 +86,7 @@ for (j=0; j<128; j++) {
     for (i=0; i<128; i++) {
         data[i][j] = 0;
     }
-} // 계속 페이지 fault 남
+}
 ```
 ```c
 int i, j;
@@ -92,3 +97,85 @@ for (i=0; i<128; i++) {
     }
 }
 ```
+- 페이지 여러 번 접근하는 걸로 인한 문제가 안생김
+  - 실제로 재현하기 힘듬
+  - 아두이노, 라즈베리파이는 가능할지도
+- 굉장히 중요한 개념인건 맞음
+  - 코드 전체가 실행되는게 아닌 코드의 일부분만 반복적으로 실행
+
+### H/W Support to Demand Paging
+- Page table
+    - page in / page out 상태를 알아야함
+    - 그걸 위해 valid invalid 등을 사용
+- Secondary memory(=swap space)
+  - SSD, HDD
+
+### Instruction Restart
+- page fault가 일어났을 때 trap이 걸림
+- process별로 page table을 잘 관리해줘야 함
+- instruction이 다시 패치해서 restart 시키거나 operand를 패치할 때 발생
+  - instruction을 가지고 와서 operand를 다시 패치
+
+- 이거 무슨 얘기하는건지 모르겠네
+
+### As a worst-case example
+- ADD A, B, C; three address instruction, adding A and B into C. 
+- 어셈블리 명령어 중 하나
+    1. Fetch and decode the instruction(ADD)
+      - register ALU가 더해서 fetch
+    2. Fetch A
+    3. Fetch B
+    4. ADD A and B
+    5. Store the sum in C
+
+### Free Frame List
+- free frames의 pool이다 = linked list다
+- free frame들은 반드시 어떤 스택이나 keep segment를 가지고 관리해줘야 함 <br>
+<img src="./img/free_frame_list.png" width="70%">
+
+### Performance of Demand Paging
+- demand paging에 영향을 미치는 요소들을 보려면 effective access time을 계산해주면 됨
+
+- EAT = (1 - p) x ma + p * (page fault time) 
+  - page fault time을 곱해주는데 TLB 같이 2배가 아니라 수백배, 수만배가 됨
+  - context switch가 일어나고 wait queue에서 기다리다가 swap하고 하드디스크에서 access해서 page in 한 다음에 trap 해가지고 다시 되돌아오니까
+- 그러면 이 시간이 걸리는 이유가 뭘까?
+  - 한 16가지 있는데 그 중에서 중요한 3가지만 보자면
+    1. Service the page-fault interrupt
+      - page fault 때문에 trap 걸어주는 시간
+    2. Read in the page
+      - page를 읽어들이는 시간
+      - 여기서 대부분의 시간이 걸리고 나머지는 다 미미함
+    3. Restart the process
+      - process를 재시작하는 시간
+
+### Consider a system
+- Average page port service time을 대충 그려서 8ms(8백만 ns)
+- memory access time은 200ns
+- EAT = (1 - p) x 200 + p x 8,000,000 <br>
+  = 200 + 7,999,800 x p
+- 만약 p가 0.001이라면
+  - 1000번 access할 때 1000번에 한 번 page fault가 일어난다면
+  - EAT = 200 + 7999.8 = 8199.8 nanoseconds != 8.2 microseconds
+
+## Copy-on-Write
+### Copy-on-Write
+- write 할 때 copy를 하자
+  - shared page를 굳이 나눌 필요가 없다
+  - write만 안하고 read만 하면 어차피 똑같아서 
+  - write를 하면 그 때 copy를 하자 <br>
+<img src="./img/copy_on_write.png" width="70%">
+
+- process 1(virtual) &rarr; physical memory &rarr; process(logical)
+  - fork한 다음에 exe하는 구조
+  - value = "O", value += "O"
+  - 이럴 때 copy on write를 한다.
+
+# Chapter 10-2. 페이지 교체 알고리즘
+## Page Replacement
+### What happens if there is no free frames?
+- 우리가 page out을 하고 page in 을 하려할 때 free frame이 없다면?
+  - 하나의 메모리에 동시에 load되는 process의 숫자를 늘려나가면 메모리에 over-allocating이 발생
+  - physical memory를 전부 다 사용하는 경우가 발생
+- 예를 들어 40개의 frame이 있는 memory가 있을 때
+  - 6개의 process가 돌고 있다면
