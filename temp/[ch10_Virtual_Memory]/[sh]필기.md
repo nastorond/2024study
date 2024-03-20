@@ -162,3 +162,174 @@
 - Recall the process creation with **fork()** and **exec()**<br>
 <img src="./img/copy_on_write.png" width="70%"><br>
 
+# 페이지교체 알고리즘
+## Page Replacement
+### What happens if there is _no free frames_?
+- If we increase our degree of multiprogramming,
+    - we are over-allocating memory
+    - 피지컬 메모리를 다 사용하는 경우 발생
+- If we have 40 frames and run 6 processes,
+    - each of which is _10 pages_ in size, but actually uses only _5 pages_
+    - Then, we manage to deamnd-page system with 10 frames spared
+    - frame == page
+- However, what if the processes _suddenly want to use all 10 pages_
+    - or need a huge buffer _consuming more pages than available ones?<br>
+<br>
+<br>
+<img src="./img/needForPageReplacement.png" width="70%"><br>
+
+### Page Replcement
+- If no frame is free
+    - find one that is not currently being used and free it
+- Free a frame by writing its contents to swap space
+    - and changing the page table
+    - to indicate that the page is no longer in memory (invalid or dirty)
+- Now, use the freed frame to hold page
+    - for which the process faulted
+<br>
+<br>
+<img src="./img/placeReplaceement.png" width="70%"><br>
+
+### Page Fault Service Routine incl. Page Replacement
+1. Find the location of the desired page on secondary storage
+2. Find _a free frame_:
+    - If there is a free frame, use it
+    - If ther is _no free frame_, use a _page-replacement algorithm_ to select a _victim frame_
+    - Write the victim frame to secondary storage; chage the page and frame tables accordingly
+- Read the desired page into the _newly freed frame_
+    - change the page and frame tables
+- Continue the process from where the _page fault occured_
+
+### Two major prbs. impl demand paging
+- _Frame-allocation algo._
+    - how many frames to allocated to each process?
+- _Page-replacement algo._
+    - select the frames that are to be replaced
+- Since the secondary storage I/O is _so expensive_
+    - enev _slight improvements_ in demand-paging methods
+    - can yield _large gains_ in system performance
+### Evaluation of Page Replacement Algo.
+- _reference string_ : a string of memory references
+- Evaluate an algo. by running it on a reference string
+    - and computes _the number of page faults_ (minimize it!)
+- What about the number of page frames?
+    - Obviously, the more frames, the less page faults<br>
+<img src="./img/graphofpagefaultsversusnumberofframes.png" width="40%"><br>
+
+### FIFO Page Replacement
+- FIFO : First-In-First-Out: the Simplest algo.
+- Choose _the oldest page_ when a page must be replaced
+- There are _15page faults_ with our ex.<br>
+<img src="./img/FIFOpagereplacement.png" width="40%"><br>
+
+### _Belady's Anomaly_
+- The page-fault rate _may increase_
+    - as _the number of allocated frames increases_<br>
+<img src="./img/beladyanomaly.png" width="40%"><br>
+
+- 중간에 늘어나는게 포인트
+
+### _Optimal_ Page Replacement
+- Seeking for an _optimal_ algo. that has the _lowest page-fault rate_,
+    - and _never suffers from_ Belady's Anomaly
+- OPT or MIN
+    - replace the page that _will not be used_ for the _longest period of time_
+- OPT will guarantee the lowest possible page-fault rate
+    - 가장 쓸일이 없을거같은거 버리기
+### The difficulty of impl. OPT:
+- There are _9 page faults_ with our e.g.
+- OPT requires _future knowledge_ of the reference string
+    - used mainly for comparison studies
+    - 미래를 알아야함, 자랑용 ㅋㅋ<br>
+<img src="./img/Optimal_page_replacementalo.png" width="40%"><br>
+
+### Recall the Shortest-Job-First CPU scheduler
+- The key distinction between the FIFO and the OPT:
+    - _looking backward_: when a page was _brought in_?
+    - _looking forward_ : when a page to _be used_?
+- If we use the _recent past_
+    - as an _approximation_ of the _near future_,
+- then we can replace the page
+    - that has _not been used_ for the _longest period of time_
+### _LRU_ Page Replacement
+- LRU: Least Recently Used
+- Associates with each page _the time of that page's last use_, and
+    - choose the page that has _not been used_ for the _longest period_ of time
+    - There are _12 page faults_ with our e.g.<br>
+<img src="./img/LRU_page_replacement.png" width="40%"><br>
+
+### LRU policy
+- is considered to be _good_ and is _often used_
+- However, the prob. to solve for the impl. of LRU is
+    - to determine an order for the frames defined by the time of last use?
+- It may require substantial _hardware assistance_
+    - Two impl. are possible: _counter_ and _stack_
+- LRU _does not suffer_ from Belady's anomaly like OPT
+### Two impl. methods for the LRU
+- _Counter_ impl.
+    - Whenever a page is referenced, copy the counter(or the clock)
+    - Replace the page with the smallest value<br>
+<img src="./img/usestack_to_record_the_most_recent.png" width="40%"><br>
+
+- Stack impl.
+    - Keep a stack of page numbers
+    - Note that entries must be removed from the middle of the stack
+    - 스택아닌데 스택임
+
+### LRU-Approximation
+- LRU needs hardware support,
+    - however, many systems provide some help with a _reference bit_
+- _reference bit_
+    - initially 0, a bit associated with each page
+    - when a page is referenced, set to 1
+    - replace any with reference bit = 0 (if any )
+### Second-Chance Algo.
+- Use a FIFO replacement algo.
+- However, inspect reference bit, when a page has been selected
+    - If the value is 0, proceed to replace it
+    - If the value is 1, give the page a second chance and move on to select the next FIFO page
+- When a page gets a second chance,
+    - its reference bit is cleared,
+    - and its arrival time is reset to the current time<br>
+<img src="./img/second_chance_page_replace_algo.png" width="40%"><br>
+
+- FIFO로 하다가 Reference bit 를 이용해서 second chance를 준다
+
+## Allocation of Frames
+### The Issues for Frame Allocation
+- Consider a simple case of system with 128 frames
+    - OS may take 35, leaving _93 frames_ for the user process
+- Using the _pure-demand-paging_
+    - 93 frames would be put on the _free-frame_ list
+- The first 93 page faults would get free frames
+    - $94^th$ _page faults_ would cause a _page replacement_
+- Then, if we have _two processes_,
+    - how do we _allocate 93 frames_ to these _two processes_?
+### The strategies for frame allocation
+- Equal .vs. Proportional:
+    - _equal allocation_: give every process an equal share
+    - _proporional allocation_: allocate according to the size of process
+- Global .vs. Local
+    - _local replacement_ : select from _only its own_ set of allocated frames
+    - _global replacement_ : selects a replacement frame from the set of all the frames in the system
+- 해결책은 책을봐라 별로 안중요함 ㅋㅋ. 개념이나 보셈
+
+## Thrashing
+### Thrashing
+- a situation that a process is busy swapping pages in and out
+    - page in and out 하느라 바빠서 일을 몬함
+- if a process does _not_ have _enough pages_,
+    - the page-fault rate is very high
+- 쓰레쉬 ㄷㄷ <br>
+<img src="./img/Thrashing_gp.png" width="40%"><br>
+
+### Working-Set Model
+- based on the assumption of _locality_
+- define the _working-set window_ with a parameter $\Delta$
+- The idea is to examine the most recent $\Delta$ page references
+    - _working-set_: the set of pages in the most recent $\Delta$ page references
+- If a page is in active use,
+    - it will be in the working set
+- If it is no longer being used,
+    - it will drop from the working set time units after its last reference<br>
+<img src="./img/workingsetmodel.png" width="40%"><br>
