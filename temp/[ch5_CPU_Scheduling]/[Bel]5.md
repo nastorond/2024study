@@ -94,7 +94,7 @@
     - RR을 쓸 때 다음 프로세스를 선택할 때 우선순위 선정하겠다는 것
 - MLQ : Multi Level Queue
     - 상황에 따라 다른 level을 선택하는 multi level
-- MLFQ : Multi-Level Feddback Queue
+- MLFQ : Multi-Level Feedback Queue
     - 피드백까지 추구
     - 현대적인 모습을 갖춤
 
@@ -110,7 +110,7 @@
 ### Note that
 - The average waiting time under the FCFS policy
     - is generally not minimal and may vary substantially
-    - if the processes' CPU-brust times vary greatly
+    - if the processes' CPU-burst times vary greatly
 
 - Preemptive or non-preemptive?
     - The FCFS scheduling algo is non-preemptive

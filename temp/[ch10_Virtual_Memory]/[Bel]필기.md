@@ -178,4 +178,5 @@ for (i=0; i<128; i++) {
   - 하나의 메모리에 동시에 load되는 process의 숫자를 늘려나가면 메모리에 over-allocating이 발생
   - physical memory를 전부 다 사용하는 경우가 발생
 - 예를 들어 40개의 frame이 있는 memory가 있을 때
-  - 6개의 process가 돌고 있다면
+  - 6개의 process가 돌고 있고 각 process가 10개의 page를 가지고 있다면
+  - frame이 40개라 전부 running은 못함 

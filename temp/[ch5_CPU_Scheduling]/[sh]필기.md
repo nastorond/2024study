@@ -1,6 +1,6 @@
 # CPU Scheduling Part 1
 ### CPU scheduling is
-- the basis of multiprogrammed o/s
+- the basis of multi programmed o/s
 - The objective of multiprogramming is
     - to have some processes running at all times
     - to maximize CPU utilization
@@ -15,7 +15,7 @@
         - 피포큐
     - Priority Queue : How can we determine the priority of a process?
 ### Preemptive(선점형) vs. Non-Preemptive
-- 선점형은 쫓아낼 수 있다는 ㄷ것
+- 선점형은 쫓아낼 수 있다는 것
 - 비선점형은 자발적으로 나가게 유도
 - Non-preemptive scheduling
     - a process keeps the CPU until it releases it
