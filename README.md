@@ -40,3 +40,6 @@ commit 내역으로 확인할거임<br>
     - 영상은 퀴즈 전까지 
 
 2. 미정
+
+## Reference
+[CS 면접질문](https://www.nossi.dev/cs)

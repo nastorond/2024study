@@ -3,10 +3,12 @@
 ## Background
 ### A process is a program _in execution_
 - to say, a set of instructions kept in a _main memory_
+
 ### A memory consists of
 - a large _array of bytes_, each with its own address
 - CPU _fetches_ instructions from memory using the _program counter_
 - and instructions may cause _load from_ and _store to_ the memory
+
 ### Memory space
 <img src="./img/memory_space.png" height="30%"><br>
 
@@ -71,7 +73,7 @@
 - _shared library_: DLLs are also known as shared libraries
     - since only one instsance of the DLL in main memory
     - can be shared among multiple user processes
-## Contihuous Memory Allocation
+## Contiguous Memory Allocation
 ### Contiguous Memory Allocation
 - 연속 메모리 할당
 - 메모리를 할당을 해줘야함 프로세스한테

@@ -7,18 +7,21 @@
   - 이 말은 즉 main memory에 프로그램이 load 되어있는 상태를 얘기함.
 
 ### A memory consists of
-- memery는 8bit(byte) 단위로 구성되어있는 것- swa pig
+- memory는 8bit(byte) 단위로 구성되어있는 것
+- swap in
   - 때 = access할 필요가 있을 때ry는 각각의 주소를 가지고 있음만 들어와라
 - swap out
   - out of memory
   - 밖에 나가있어라
 
 - swap in
-- 있을 때 = access할 필요가 있을 때mery에서 instruction을 패치해와서 instruction의 program c un- swappinger가 지정하는 주소에 있는 instruction을 실행만 들어와라- swap out
+- 있을 때 = access할 필요가 있을 때 memory에서 instruction을 패치해와서 instruction의 program c un- swappinger가 지정하는 주소에 있는 instruction을 실행만 들어와라- swap out
   - out of memory
   - 밖에 나가있어라
 
-- 요가 있을 때 = access할 필요가 있을 때tion이 load와 store를 해서 memory에 access함.만 들어와라- swap out
+- 요가 있을 때 = access할 필요가 있을 때tion이 load와 store를 해서 memory에 access함.
+만 들어와라
+- swap out
   - out of memory
   - 밖에 나가있어라
 
@@ -29,7 +32,7 @@
 
 <img src="./img/memory_space.png">
 
-- memery 주소 공간을 각 process들이 따로따로 관리  할- swapping수 있음
+- memory 주소 공간을 각 process들이 따로따로 관리  할- swapping수 있음
   - 때 = access할 필요가 있을 때iprogramming만 들어와라
 - swap out
   - out of memory
@@ -56,7 +59,7 @@
 - program 별로 주소를 구성하는 방식이 다 다름
 - 변수를 설정하고 해당 변수에 값을 할당할 때
   - a라는 변수 설정, a라는 값이 10을 할당
-  - 우리는 memery 주소공간에 10을 써달라고 요청할 뿐
+  - 우리는 memory 주소공간에 10을 써달라고 요청할 뿐
 - swa pig
   - 있을 때 = access할 필요가 있을 때이 어떤 번지에 있어야하는지는 compiler가 지정해줘야함만 들어와라
 - swap out
@@ -65,7 +68,8 @@
 
 - 프로그램도 우리가 실행 시키기 전에는 binary executable 파일로 디스크에 저장되어있을 뿐이다.(쓸모없는 정보)
   - 우리가 호출해야 그제서야 memory가 되고 program으로서 작동함
-- 우리가 symbolic하게 정의해준 memery 번지를 complier가 지정해줌- swap in
+- 우리가 symbolic하게 정의해준 memory 번지를 complier가 지정해줌
+- swap in
   - memory에 올라와 있을 필요가 있을 때 = access할 필요가 있을 때만 들어와라
 - swap out
   - out of memory
@@ -78,7 +82,7 @@
   - 그 이후에 loader가 loading하면서 재바인딩 해줌
   - relocatable address를 absolute address로 변환
  
-<img src="./img/multistep_processing.png" width="20%">
+<img src="./img/multistep_processing.png" width="50%">
 
 - source program 일 때
   - symbolic
@@ -111,9 +115,9 @@
   - 만약 실행파일이 memory보다 크다면?
   - dynamic loading을 해줘야한다.
 - dynamic loading 
-  - memery 주소공간을 효율적으로 활용
+  - memory 주소공간을 효율적으로 활용
 - swap in
-  - 때 = access할 필요가 있을 때outine을 한번에 loading하지 않고 필요할 때만 호출하자만 들어와라
+  - 때 = access할 필요가 있을 때 outline을 한번에 loading하지 않고 필요할 때만 호출하자만 들어와라
 - swap out
   - out of memory
   - 밖에 나가있어라
@@ -140,7 +144,7 @@
   - 사용하는 방법은 다르지만 개념은 같음
 
 ## Contiguous Memory Allocation 
-### Contiguous Memory Allocation (연속 memery 할당)- swa pig
+### Contiguous Memory Allocation (연속 memory 할당)- swa pig
 - 야memory에 올라와 있을 필요가 있을 때 = access할 필요가 있을 때함만 들어와라- swap out
   - out of memory
   - 밖에 나가있어라
@@ -153,7 +157,7 @@
   - 이걸 Contiguous Memory Allocation 이라고 함
 
 ### Memory Protection
-<img src="./img/memory_protection.png" width="20%">
+<img src="./img/memory_protection.png" width="70%">
 
 - 통째로 올려놨기 때문에 protection은 쉬움
 - limit와 relocation을 부여하고 영역을 지정
@@ -167,28 +171,18 @@
   - variable partition을 가지고 있으면 어떤 프로세스를 어떻게 할거냐가 문제가 됨
 - hole
   - a block of available memory
-  - memery가 할당될 수 있는 공간
-- swap in
-<i 있을 때 = access할 필요가 있을 때./img/variable_partition.png" width="20%">만 들어와라- swap out
-  - out of memory
-  - 밖에 나가있어라
+  - memory가 할당될 수 있는 공간 <br>
+<img src="./img/variable_partition.png" width="70%">
 
-
-1. process 8이 끝나서 memery 반납- swap in
-2. 올라와 있을 필요가 있을 때 = access할 필요가 있을 때 들어옴만 들어와라- swap out
-  - out of memory
-  - 밖에 나가있어라
-
+1. process 8이 끝나서
+2. 
 3. process 5가 끝났는데 공간이 2개로 쪼개짐
 4. 그래서 **hole** 이 생김
 5. 이 hole을 어떻게 관리할까 가 논제
 
 ### The Problem of Dynamic Storage Allocation
 - process들이 끝날 때마다 실행되고 빠져나가고 하게되면 free hole들이 발생
-- 어떤 size가 n인 memery에서 free hole 을  swapping어떻게 관리해줄까?
-- 을 때 = access할 필요가 있을 때만 들어와라- swap out
-  - out of memory
-  - 밖에 나가있어라
+- 어떤 size가 n인 memory에서 free hole 을  swapping어떻게 관리해줄까?
 
   1. First-Fit
     - linked-list를 순서대로 따라가면서 free hole들을 확인
@@ -256,7 +250,7 @@
 - logical address를 physical address로 변경
     1. page number 'f'를 추출, 그걸 가지고
     2. page에 해당되는 number 'f'의 page frame을 찾아서 
-    3. 해당 page frame의 offset을 가지고 memory access를 함(변경함)
+    3. 해당 page frame의 offset을 가지고 memory access를 함(변경함) <br>
 <img src="./img/paging_model.png" width="60%"><br>
 
 - logical memory는 page 0~3 &rarr; 4개
@@ -280,7 +274,7 @@
 page size를 어떻게 정할까 = frame size를 어떻게 정할까
 - H/W에 dependant함
   - 크게 고민할 필요없음
-  - 옛날에는 4KB / 요즘은 memery가 크고 속도도 빨라져서 4MB or 1MB로 
+  - 옛날에는 4KB / 요즘은 memory가 크고 속도도 빨라져서 4MB or 1MB로 
 - swa pig설정
   -  올라와 있을 필요가 있을 때 = access할 필요가 있을 때일만 들어와라
 - swap out
@@ -289,17 +283,17 @@ page size를 어떻게 정할까 = frame size를 어떻게 정할까
 
 - 반드시 2의 제곱수여야 한다. (배수라고 했는데 예시가 30인걸 보니 잘못 말하신듯)
   - 4KB 나 1GB 이런식으로 설정하자
-- logical address space = 2^m / page size = 2^n
+- logical address space = $2^m$ / page size = $2^n$
   - high-order m-n bits &rarr; page number
-  - low-order n bits &rarr; page offset
+  - low-order n bits &rarr; page offset <br>
 <img src="./img/paging_example.png" width="40%"><br>
 
 - 뭐가 잘못된거야?
-  - 몰라 그냥 넘어가~~ (우리에게 필요한 자세)
+  - 몰라 그냥 넘어가~~ (예진이에게 필요한 자세)
 
 ### When a process arrives in the system to be executed
 - 어떤 새로운 process가 도착했을 때 memory allocation을 해주기 위해 해야할 일
-  - 그냥 들어온 순서대로 allocation 해주면 되는 듯
+  - 그냥 들어온 순서대로 allocation 해주면 되는 듯 <br>
 <img src="./img/allocation_free_frames.png" width="40%"><br>
 
 ### Hardware Support
@@ -322,8 +316,8 @@ page size를 어떻게 정할까 = frame size를 어떻게 정할까
     2. actual data에 접속
 
 ### Translation Look-aside Buffer(TLB)
-- 아주 작고 lookup이 빠른 cache memory를 사용
-<img src="./img/TLB.png" width="40%"><br>
+- 아주 작고 lookup이 빠른 cache memory를 사용 <br>
+<img src="./img/TLB.png" width="40%"> 
 
 - Page table에 memory access를 할 때
   1. logical address에 가서 page table을 거침
@@ -345,8 +339,8 @@ page size를 어떻게 정할까 = frame size를 어떻게 정할까
   - TLB hit가 발생하는 비율
 - 예시
   - 어떤 system이 access하는데 10ns 가 걸린다
-    - 80% hit ratio = 0.80 x 10 + 0.20 x 20 = 12ns
-    - 90% hit ratio = 0.99 x 10 + 0.01 x 20 = 10.1ns
+    - 80% hit ratio : 0.80 x 10 + 0.20 x 20 = 12ns
+    - 90% hit ratio : 0.99 x 10 + 0.01 x 20 = 10.1ns
     - 뒤에 20을 곱하는 이유는 TLB miss시간이 포함되어 x2해준거
 
 ### Memory Protection with Paging
@@ -360,7 +354,7 @@ page size를 어떻게 정할까 = frame size를 어떻게 정할까
     - logical address space에 포함되지 않음
     - illegal
 - 만약 illegal address가 오면
-  - valid-invalid bit를 보고 trap을 걸어줌
+  - valid-invalid bit를 보고 trap을 걸어줌 <br>
 <img src="./img/valid_invalid_bit.png" width="40%"> <br>
 
 ### Shared Pages
@@ -402,7 +396,7 @@ page size를 어떻게 정할까 = frame size를 어떻게 정할까
   - 한 process 당 한 frame, 한 page만 옮길 수 있음
   - 동시에 돌릴 수 있는 program process의 수가 훨씬 더 많음
 - process의 instruction, data/ 어떤 명령어, 명령어가 access하는 data
-  - memery에 상주해 있어야 함.
+  - memory에 상주해 있어야 함.
 - swap in
   - access할 필요가 있을 때만 들어와라
 - swap out
@@ -428,5 +422,5 @@ page size를 어떻게 정할까 = frame size를 어떻게 정할까
   - swap in &rarr; page in
     - memory에서 backing store로 page를 옮기는 것
 - paging은 virtual memory에서 가장 큰 힘을 발휘한다
-  - 다음시간에 배울 것
+  - 다음시간에 배울 것 <br>
 <img src="./img/swapping_with_paging.png" width="40%"><br>
