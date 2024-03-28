@@ -86,5 +86,202 @@
 - 얘도 storage, second storage의 일종이다.
 
 ### RAID
-- 위에 정리해놨는데 여기서 나오네;
+- 위에 정리해놨는데 여기서 나오네; 근데 뒤에서 또 나온다네
 - 데이터의 저장과 읽기, 쓰기 bandwidth를 늘려줘야 하는데 이걸 parallel하게 할 수 있음
+- 만약 하드디스크가 물리적으로 고장이 났을 때 복원을 어떻게 해야할까
+  - redundant한 information을 추가
+    - 데이터가 깨지는 것 방지
+    - recovery(복구)할 수 있도록 만들기
+    - hard disk failure에도 loss data가 없도록 하고 싶음
+
+### Redundancy
+- data의 Reliability를 Redundancy로 올리는 방법
+- 1개의 디스크가 있을 때
+  - bad sector가 거의 나지 않음
+- N개의 디스크가 있을 때
+  - 오류가 발생할 확률이 훨씬 더 높아짐
+- MTBF(mean time between failures) 
+  - 예를 들어 MTBF 가 100000 hours이고
+  - 디스크가 100개다 하면 1000시간에 1번씩 에러가 남
+  - data center는 하드 디스크가 훨씬 많아서 더 심각해짐
+  - 그래서 중요한 정보를 저장하기 곤란함
+- 어떤 redundant 한 정보를 주더라도 reliability를 보장해야함
+  - 가장 쉬운 방법은 모든 디스크 내용을 복제해 놓기
+
+### Parallelism
+- performance를 올리는 방법
+- striping
+  - 여러 개의 드라이브가 있다면 전송률을 올리는데 사용할 수 있음
+  - bandwidth를 striping하면 훨씬 더 빠르게 데이터를 읽고 쓸 수 있음
+- bit-level striping
+  - striping을 bit level로 보낸다
+  - bit가 8개 있으면 byte로 striping할 수도 있음
+- block-level striping
+  - bit가 8개 있으면 i bit를 i번째 드라이브에 쓰면 됨
+  - 아예 block level striping으로 parallel하게 처리
+
+### RAID Levels
+- mirroring
+  - data를 redundant하게 copy
+  - highly reliable하게 복사하는 대신 너무 비쌈
+- striping
+  - 개수가 있는 만큼 bandwidth를 늘릴 수 있음
+  - reliable과는 아무 관계가 없음
+- parity bit
+  - data 통신을 하면 배우게 됨
+  - 이진수로 표현한거 + 홀수인지 짝수인지 추가로 보낸다는 거 같음
+  - 1111 이면 홀수니까 1을 더 붙여서 11111 이렇게
+  - 이걸 조금 더 확장 &rarr; checksum &rarr; CRC(cyclic redundancy check) 순환 중복 검사
+- 이런 것들을 이용해서 에러가 발생했는지 발생했다면 복구할 수 있는지를 가지고 RAID Level로 나눠보자
+
+<img src="./img/RAID_Level.png" width="60%">
+
+- 이건 위에 내용 참고하자 [RAID_system](#raid-system-redundant-array-of-independentinexpensive-disk)
+
+## I/O Systems
+### Two main jobs of a computer: I/O and computing
+- 컴퓨터가 하는 일 대부분 I/O
+  - 요즘엔 UI/UX 중에서도 UX가 더 중요한 시기가 됐음
+  - 사실 우리가 컴퓨터 하는 대부분의 일이 컴퓨터 입장에서는 가끔 입력을 주는거임
+  - game같은 것도 무거운건 Gpu에서 처리하고 대부분 IO가 함
+- 우리가 할 일은 IO를 컨트롤
+  - IO 디바이스를 관리하는 게 OS의 할일
+  - 우리는 kernal을 건드리는 일은 없고 대부분 IO device driver를 만들어 줌
+  - 근데 강의에선 안 다루지만 이론은 알아야 한대요
+
+<img src="./img/PC_bus_architecture.png" width="60%">
+
+- 모든 PC architecture의 중심에는 bus가 있음
+- bus에는 controller가 하나씩 달려있음
+- IO device controller를 가지고 PCI bus를 통해 CPU가 각 device에게 명령을 내림
+  - 그걸 OS가 다 관장해줌
+
+### Memory-Mapped I/O
+- input/output을 하려면 어떤 device에 cpu가 명령을 전달할 것인가
+- 수형이는 해봤겠다 라네요
+
+- data-in register
+- data-out register
+- status register
+- control register
+
+- IO address에 어떤 instruct controller가 달려 있는지 memory에 mapping
+  - 우리는 memory에 IO 명령을 줌
+  - 이 메모리 명령을 통해 우리가 control register의 역할을 할 수 있음
+
+<img src="./img/Memory-mapped.png" width="60%">
+
+### Three types of I/O
+- 이거는 좀 중요
+1. polling
+  - [busy waiting](../../operatingSystem/필기%20정리/[OS]Ch_6-2_Synchronization%20Tools.md#busy-waiting--바쁜대기)이라고 이미 배움
+  - register 정보에 데이터를 받을 때 busy loop를 돌면서 busy waiting을 함
+  - 이걸 polling 방식의 I/O라고 함
+  - status register, state register를 반복해서 bit가 clear 될 때 까지 읽자
+  - bit가 clear 되면 data를 받아옴 
+2. interrupt
+  - 우리가 아는 그 interrupt
+  - interrupt 종류를 쭉 선언
+    - interrupt vector table에다가 모아놓음
+  - interrupt를 처리해주는 interrupt service routine(ISR)한테 제어권을 넘겨줌
+  - H/W 라면 H/W 한테 주면 되고 S/W 라면 function을 만들어서 처리
+3. DMA
+  - Direct Memory Access
+  - Add, load, store하고 move하지 않고 그냥 H/W bus타고 바로 가버리는거
+- 1,2 번이 대표적인 I/O의 방식, 너무 대용량이면 3번
+
+<img src="./img/IO_System.png" width="60%">
+<img src="./img/vector_table.png" width="60%">
+<img src="./img/DMA_transfer.png" width="60%">
+
+### Blocking I/O vs Non-blocking I/O
+- Blocking I/O
+  - Thread가 suspend 되야함
+  - running queue에서 waiting queue로 감(blocking 당해서)
+- Non-blocking I/O
+  - execution을 정지시키지 않음
+  - waiting queue에서 기다리지 않는다
+- Asynchronous system call
+  - 계속 실행해 나감
+
+### The diff. between non-blocking and asynchronous system call
+- non-blocking
+  - 즉시 return
+  - 그냥 데이터 체크를 안함 + 상관없다
+- asynchronous system call
+  - transfer 요청만하고 할 일 하러감
+
+<img src="./img/non-blocking and asynchronous system call.png" width="60%">
+
+## File-System Interface
+### File System
+- logical 하게 storage에다가 data를 쓰는 방법
+- O/S가 직접해주는 H/W 부분 말고 어디에 어떻게 데이터를 저장하고 읽고 쓰고 하고 싶은거
+- 2가지 파트가 있음
+  1. file/folder
+  2. directory
+
+### Access Methods
+1. sequential access
+2. direct access
+
+<img src="./img/access_method.png" width="60%">
+
+### Directory Structure
+-  파일들을 관리해 줄 수 있음
+- 역사적으로 directory 종류 있었는데 그림으로 보시죠
+
+<img src="./img/directory_structure.png" width="60%">
+<img src="./img/tree_structure.png" width="60%"> 
+<img src="./img/graph_structure.png" width="60%">
+- 왼쪽이 사이클 없는거 오른쪽이 있는거
+
+## File-System Implementation
+### The file system itself
+<img src="./img/layered_file_system.png" width="60%">
+
+- file system도 여러 개의 단위로 나뉘어짐
+
+### Allocation Method
+- 파일 system에 어떻게 location 할거냐
+- page paging할 때마냥
+- 효율적이고 빠르게
+
+- Contiguous Allocation
+- Linked Allocation
+- Indexed Allocation
+
+### Contiguous Allocation
+<img src="./img/contiguous_allocation.png" width="60%">
+
+- 파일을 연속적으로 통째로 올리기
+- 이렇게 해놓으면 알고리즘 중에 FIFO SCAN 뭘 써도 효율적이다
+- 대신 읽었다가 지웠다가 하느라 external fragmentation이 발생
+  - compaction 해줘야 함
+
+### Linked Allocation
+<img src="./img/linked_allocation.png" width="60%">
+
+- contiguous의 문제들을 linked list로 만들어서 블록 단위로 쪼개자
+  - page할때랑 거의 동일함
+- sequential 하면 상관 없는데 만약 찾고자 하는게 뒤쪽에 있으면 한번에 못감
+  - 처음부터 일일이 거쳐가야 해서 오래걸리고 비효율적
+  - 그래서 FAT라는 걸 사용
+
+#### FAT
+- 묘하게 기분이 나쁜 이 단어
+- File Allocation Table
+  - 어떤 volume에다가 linked list의 index를 넣어보자
+<img src="./img/FAT.png" width="60%">
+
+### Indexed Allocation
+- zip 파일 마냥 한 block에 값을 전부 참조함
+  - 그래서 한 block을 열었을 때 다른 block을 다 열어버림
+- linked list의 단점인 pointer들이 scatter 되어있다는 점을 극복
+  - 모든 pointer를 block에 담아놨기 때문에
+<img src="./img/indexed_allocation.png" width="60%">
+
+### Free-space management
+<img src="./img/free_space_management.png" width="60%">
+
+- 사용한 sector들을 제외하고 안쓴 list를 가지고 있어야 할당해서 쓸 수 있다.
